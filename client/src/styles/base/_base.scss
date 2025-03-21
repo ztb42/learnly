@@ -1,0 +1,15 @@
+@use "../helpers/variables" as *;
+@import "bootstrap/scss/bootstrap";
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
+
+html,
+#root {
+	font-family: "Open Sans", sans-serif;
+
+	background-color: $background;
+}
+
+body {
+	margin: 0;
+	padding: 0;
+}

@@ -1,0 +1,59 @@
+@use "../helpers/variables" as *;
+
+.navbar {
+	background: white;
+	padding: 0 !important;
+	border-bottom: 1px solid darken($background, 10%);
+
+	.navbar-container {
+		display: flex;
+		flex-flow: row nowrap;
+		align-items: center;
+		font-size: 1.1rem;
+	}
+
+	.logo-container {
+		background-color: $primary;
+		padding: 3px 1.5rem;
+		margin-right: 0.5rem;
+
+		a {
+			color: white;
+			font-size: 1.2rem;
+			text-decoration: none;
+		}
+	}
+
+	a:not(.logo) {
+		color: black;
+		text-decoration: none;
+		border-radius: 6px;
+		padding: 0.3rem 0;
+		margin: 0 0.5rem;
+		transition: color 0.2s ease;
+		position: relative;
+
+		&:hover {
+			color: $primary;
+		}
+
+		&::after {
+			content: "";
+			position: absolute;
+			left: 0;
+			bottom: -2px;
+			width: 0;
+			height: 2px;
+			background-color: $primary;
+			transition: width 0.3s ease;
+		}
+
+		&:hover::after {
+			width: 100%;
+		}
+	}
+
+	img {
+		width: 70px;
+	}
+}
