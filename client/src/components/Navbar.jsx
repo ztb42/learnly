@@ -1,5 +1,5 @@
 import { Avatar } from "@mui/material";
-import { NavLink } from "react-router";
+import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
 	return (
@@ -30,6 +30,12 @@ const Navbar = () => {
 				<div className="collapse navbar-collapse" id="navbarNav">
 					<NavLink to="/" className="nav-link me-auto">
 						Dashboard
+					</NavLink>
+					<NavLink to="/user-management" className="nav-link ">
+						Users
+					</NavLink>
+					<NavLink to="/create-training" className="nav-link ">
+						Training
 					</NavLink>
 					<NavLink to="/logout" className="nav-link">
 						Log Out
