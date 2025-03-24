@@ -17,9 +17,7 @@ router.post("/", async (req, res) => {
 // Get all Training Sessions
 router.get("/", async (req, res) => {
 	try {
-		const sessions = await TrainingSession.find().populate(
-			"training trainer"
-		);
+		const sessions = await TrainingSession.find();
 		res.json(sessions);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
@@ -29,9 +27,7 @@ router.get("/", async (req, res) => {
 // Get a single Training Session
 router.get("/:id", async (req, res) => {
 	try {
-		const session = await TrainingSession.findById(req.params.id).populate(
-			"training trainer"
-		);
+		const session = await TrainingSession.findById(req.params.id);
 		if (!session)
 			return res.status(404).json({ message: "Session not found" });
 		res.json(session);

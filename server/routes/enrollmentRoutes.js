@@ -17,9 +17,7 @@ router.post("/", async (req, res) => {
 // Get all Enrollments
 router.get("/", async (req, res) => {
 	try {
-		const enrollments = await Enrollment.find().populate(
-			"employee session"
-		);
+		const enrollments = await Enrollment.find();
 		res.json(enrollments);
 	} catch (error) {
 		res.status(500).json({ error: error.message });

@@ -17,9 +17,7 @@ router.post("/", async (req, res) => {
 // Get all Completion Statuses
 router.get("/", async (req, res) => {
 	try {
-		const completions = await CompletionStatus.find().populate(
-			"enrollment trainer"
-		);
+		const completions = await CompletionStatus.find();
 		res.json(completions);
 	} catch (error) {
 		res.status(500).json({ error: error.message });

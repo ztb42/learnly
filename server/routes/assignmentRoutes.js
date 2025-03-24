@@ -17,9 +17,7 @@ router.post("/", async (req, res) => {
 // Get all Assignments
 router.get("/", async (req, res) => {
 	try {
-		const assignments = await Assignment.find().populate(
-			"training employee assignedByManager"
-		);
+		const assignments = await Assignment.find();
 		res.json(assignments);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
@@ -29,9 +27,7 @@ router.get("/", async (req, res) => {
 // Get a single Assignment
 router.get("/:id", async (req, res) => {
 	try {
-		const assignment = await Assignment.findById(req.params.id).populate(
-			"training employee assignedByManager"
-		);
+		const assignment = await Assignment.findById(req.params.id);
 		if (!assignment)
 			return res.status(404).json({ message: "Assignment not found" });
 		res.json(assignment);
