@@ -15,16 +15,7 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-const whitelist = ["http://localhost:5173", "https://learnlywsu.netlify.app/"];
-const corsOptions = {
-	origin: (origin, callback) => {
-		if (!origin || whitelist.includes(origin)) {
-			callback(null, true);
-		} else {
-			callback(new Error("Not allowed by CORS"));
-		}
-	},
-};
+const corsOptions = { origin: "https://learnlywsu.netlify.app/" };
 app.use(cors(corsOptions));
 
 const connectDB = async () => {
