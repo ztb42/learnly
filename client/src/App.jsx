@@ -3,7 +3,7 @@ import Layout from "./pages/Layout";
 import Dashboard from "./pages/Dashboard";
 import UserManagement from "./pages/UserManagement";
 import CreateTraining from "./pages/CreateTraining";
-import TrainingPrograms from "./pages/Trainingprograms";
+import TrainingPrograms from "./pages/TrainingPrograms";
 import ErrorPage from "./pages/Error";
 
 function App() {
@@ -11,6 +11,7 @@ function App() {
 		{
 			path: "/",
 			element: <Layout />,
+			errorElement: <ErrorPage />,
 			children: [
 				{
 					index: true,
