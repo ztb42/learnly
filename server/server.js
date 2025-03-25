@@ -42,3 +42,5 @@ app.use("/api/training-sessions", trainingSessionRoutes);
 app.use("/api/assignments", assignmentRoutes);
 app.use("/api/enrollments", enrollmentRoutes);
 app.use("/api/completion-statuses", completionStatusRoutes);
+
+module.exports = app;
