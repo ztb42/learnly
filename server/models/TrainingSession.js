@@ -1,22 +1,22 @@
 import mongoose from "mongoose";
 
-const TrainingSessionSchema = new mongoose.Schema({
-	Training: {
+const trainingSessionSchema = new mongoose.Schema({
+	training: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "TrainingProgram",
 		required: true,
 	},
-	Trainer: {
+	trainer: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
 		required: true,
 	},
-	SessionDate: { type: Date, required: true },
-	SessionTime: { type: String, required: true },
+	sessionDate: { type: Date, required: true },
+	sessionTime: { type: String, required: true },
 });
 
 const TrainingSession = mongoose.model(
 	"TrainingSession",
-	TrainingSessionSchema
+	trainingSessionSchema
 );
 export default TrainingSession;

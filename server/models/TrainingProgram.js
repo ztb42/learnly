@@ -1,19 +1,19 @@
 import mongoose from "mongoose";
 
-const TrainingProgramSchema = new mongoose.Schema({
-	Title: { type: String, required: true },
-	Description: { type: String },
-	Duration: { type: Number, required: true },
-	Manager: {
+const trainingProgramSchema = new mongoose.Schema({
+	title: { type: String, required: true },
+	description: { type: String },
+	duration: { type: Number, required: true },
+	manager: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
 		required: true,
 	},
-	Deadline: { type: Date, required: true },
+	deadline: { type: Date, required: true },
 });
 
 const TrainingProgram = mongoose.model(
 	"TrainingProgram",
-	TrainingProgramSchema
+	trainingProgramSchema
 );
 export default TrainingProgram;

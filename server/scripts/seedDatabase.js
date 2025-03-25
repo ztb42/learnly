@@ -32,7 +32,7 @@ const seedDatabase = async () => {
 		// Create roles
 		const roles = ["Admin", "Manager", "Trainer", "Employee"];
 		const roleDocs = await Role.insertMany(
-			roles.map((name) => ({ RoleName: name }))
+			roles.map((name) => ({ roleName: name }))
 		);
 
 		// Generate users
@@ -54,7 +54,7 @@ const seedDatabase = async () => {
 
 		// Fetch all managers to assign a valid Manager ID
 		// Find the Manager role ID
-		const managerRole = await Role.findOne({ RoleName: "Manager" });
+		const managerRole = await Role.findOne({ roleName: "Manager" });
 
 		if (!managerRole) {
 			console.error(
@@ -77,12 +77,12 @@ const seedDatabase = async () => {
 		const trainingPrograms = [];
 		for (let i = 0; i < 5; i++) {
 			trainingPrograms.push({
-				Title: faker.lorem.words(3),
-				Description: faker.lorem.sentence(),
-				Manager:
+				title: faker.lorem.words(3),
+				description: faker.lorem.sentence(),
+				manager:
 					managers[Math.floor(Math.random() * managers.length)]._id, // Assign a random manager
-				Duration: faker.number.int({ min: 1, max: 12 }), // Random duration (weeks/months)
-				Deadline: faker.date.future(), // Future deadline
+				duration: faker.number.int({ min: 1, max: 12 }), // Random duration (weeks/months)
+				deadline: faker.date.future(), // Future deadline
 			});
 		}
 
@@ -91,7 +91,7 @@ const seedDatabase = async () => {
 		);
 
 		// Find the Trainer role ID
-		const trainerRole = await Role.findOne({ RoleName: "Trainer" });
+		const trainerRole = await Role.findOne({ roleName: "Trainer" });
 
 		if (!trainerRole) {
 			console.error(
@@ -115,12 +115,12 @@ const seedDatabase = async () => {
 		for (const program of trainingProgramDocs) {
 			for (let i = 0; i < 3; i++) {
 				trainingSessions.push({
-					Training: program._id, // Match schema field name
-					Trainer:
+					training: program._id, // Match schema field name
+					trainer:
 						trainers[Math.floor(Math.random() * trainers.length)]
 							._id, // Assign a random trainer
-					SessionDate: faker.date.future(),
-					SessionTime: `${faker.number.int({ min: 9, max: 17 })}:00`, // Random hour between 9AM-5PM
+					sessionDate: faker.date.future(),
+					sessionTime: `${faker.number.int({ min: 9, max: 17 })}:00`, // Random hour between 9AM-5PM
 				});
 			}
 		}
@@ -132,12 +132,12 @@ const seedDatabase = async () => {
 		const assignments = [];
 		for (const user of userDocs) {
 			assignments.push({
-				Employee: user._id, // Match the "Employee" field in the Assignment model
-				Training:
+				employee: user._id, // Match the "Employee" field in the Assignment model
+				training:
 					trainingProgramDocs[
 						Math.floor(Math.random() * trainingProgramDocs.length)
 					]._id,
-				AssignedByManager:
+				assignedByManager:
 					managers[Math.floor(Math.random() * managers.length)]._id, // Assign a random manager
 			});
 		}
@@ -148,8 +148,8 @@ const seedDatabase = async () => {
 		for (const user of userDocs) {
 			for (let i = 0; i < 2; i++) {
 				enrollments.push({
-					Employee: user._id, // Match the "Employee" field in the Enrollment model
-					Session:
+					employee: user._id, // Match the "Employee" field in the Enrollment model
+					session:
 						trainingSessionDocs[
 							Math.floor(
 								Math.random() * trainingSessionDocs.length
@@ -164,11 +164,11 @@ const seedDatabase = async () => {
 		const completionStatuses = [];
 		for (const enrollment of enrollmentDocs) {
 			completionStatuses.push({
-				Enrollment: enrollment._id, // Match the "Enrollment" field in the CompletionStatus model
-				Trainer:
+				enrollment: enrollment._id, // Match the "Enrollment" field in the CompletionStatus model
+				trainer:
 					trainers[Math.floor(Math.random() * trainers.length)]._id, // Assign a random trainer
-				CompletionDate: faker.date.recent(), // Add a recent date for completion
-				Status: Math.random() > 0.5 ? "Completed" : "Pending", // Match the "Status" field in the CompletionStatus model
+				completionDate: faker.date.recent(), // Add a recent date for completion
+				status: Math.random() > 0.5 ? "Completed" : "Pending", // Match the "Status" field in the CompletionStatus model
 			});
 		}
 		await CompletionStatus.insertMany(completionStatuses);

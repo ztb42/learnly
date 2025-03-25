@@ -6,8 +6,8 @@ const router = express.Router();
 // Create a new role
 router.post("/", async (req, res) => {
 	try {
-		const { RoleName } = req.body;
-		const newRole = new Role({ RoleName });
+		const { roleName } = req.body;
+		const newRole = new Role({ roleName });
 		await newRole.save();
 		res.status(201).json(newRole);
 	} catch (error) {

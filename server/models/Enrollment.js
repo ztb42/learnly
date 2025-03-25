@@ -1,18 +1,18 @@
 import mongoose from "mongoose";
 
-const EnrollmentSchema = new mongoose.Schema({
-	Employee: {
+const enrollmentSchema = new mongoose.Schema({
+	employee: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
 		required: true,
 	},
-	Session: {
+	session: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "TrainingSession",
 		required: true,
 	},
-	EnrollmentDate: { type: Date, default: Date.now },
+	enrollmentDate: { type: Date, default: Date.now },
 });
 
-const Enrollment = mongoose.model("Enrollment", EnrollmentSchema);
+const Enrollment = mongoose.model("Enrollment", enrollmentSchema);
 export default Enrollment;

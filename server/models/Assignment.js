@@ -1,22 +1,22 @@
 import mongoose from "mongoose";
 
-const AssignmentSchema = new mongoose.Schema({
-	Training: {
+const assignmentSchema = new mongoose.Schema({
+	training: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "TrainingProgram",
 		required: true,
 	},
-	Employee: {
+	employee: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
 		required: true,
 	},
-	AssignedByManager: {
+	assignedByManager: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User",
 		required: true,
 	},
 });
 
-const Assignment = mongoose.model("Assignment", AssignmentSchema);
+const Assignment = mongoose.model("Assignment", assignmentSchema);
 export default Assignment;
