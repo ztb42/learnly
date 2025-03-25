@@ -86,8 +86,8 @@ const TrainingPrograms = () => {
         <div className="row">
           {filteredTrainings.map((training) => (
             <div className="col-md-4 mb-4" key={training._id}>
-              <Card className="training-card">
-                <CardContent>
+              <Card className="training-card h-100 d-flex flex-column">
+                <CardContent className="d-flex flex-column flex-grow-1">
                   <Typography variant="h5">{training.Title}</Typography>
                   <Typography
                     className="description-typography"
@@ -101,7 +101,7 @@ const TrainingPrograms = () => {
                   <Typography variant="body2">
                     Manager ID: {training.Manager} {/* Display as ID for now */}
                   </Typography>
-                  <Typography variant="body2">
+                  <Typography className="deadline-typography" variant="body2">
                     Deadline: {training.Deadline.toLocaleDateString()}
                   </Typography>
 
@@ -111,7 +111,7 @@ const TrainingPrograms = () => {
                     variant="contained"
                     color="primary"
                     onClick={() => handleEdit(training._id)}
-                    sx={{ margin: "10px 0" }}
+                    sx={{ marginTop: "auto", paddingTop: "10px" }}
                   >
                     Edit
                   </Button>
