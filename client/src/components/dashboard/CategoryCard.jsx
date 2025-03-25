@@ -5,13 +5,10 @@ import {
 	Card,
 	CardContent,
 	CardMedia,
-	Grid2,
-	LinearProgress,
-	linearProgressClasses,
-	styled,
 	Typography,
 } from "@mui/material";
 import ColoredAvatar from "../ColoredAvatar";
+import Progress from "../Progress";
 
 const dummyUsers = [
 	{ id: 1, name: "Jon Snow" },
@@ -25,24 +22,6 @@ const dummyUsers = [
 	{ id: 9, name: "Brienne of Tarth" },
 	{ id: 10, name: "Sandor Clegane" },
 ];
-
-const CustomLinearProgress = styled(LinearProgress)(({ theme }) => ({
-	height: 6,
-	borderRadius: 5,
-	[`&.${linearProgressClasses.colorPrimary}`]: {
-		backgroundColor: theme.palette.grey[200],
-		...theme.applyStyles("dark", {
-			backgroundColor: theme.palette.grey[800],
-		}),
-	},
-	[`& .${linearProgressClasses.bar}`]: {
-		borderRadius: 5,
-		background: "linear-gradient(to right,rgb(145, 233, 179), #2196f3)",
-		...theme.applyStyles("dark", {
-			background: "linear-gradient(to right,rgb(145, 233, 179), #2196f3)",
-		}),
-	},
-}));
 
 const CategoryCard = ({ category }) => {
 	return (
@@ -100,10 +79,7 @@ const CategoryCard = ({ category }) => {
 					<Typography variant="body1" gutterBottom fontWeight={600}>
 						{category.progress}%
 					</Typography>
-					<CustomLinearProgress
-						variant="determinate"
-						value={category.progress}
-					/>
+					<Progress type="linear" progress={category.progress} />
 				</div>
 
 				<AvatarGroup max={3}>

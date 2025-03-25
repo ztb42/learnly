@@ -1,13 +1,11 @@
 import {
 	Card,
 	CardContent,
-	Button,
 	Typography,
 	Divider,
 	Box,
 	Chip,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
 import ClockIcon from "@mui/icons-material/AccessTime";
 
 const CourseCard = ({ course }) => {

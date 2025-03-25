@@ -13,6 +13,7 @@ import useApi from "../hooks/useApi";
 import AddIcon from "@mui/icons-material/Add";
 import CourseCard from "../components/dashboard/CourseCard";
 import UserCard from "../components/dashboard/UserCard";
+import Progress from "../components/Progress";
 
 const Dashboard = () => {
 	const { data: courses, loading: coursesLoading } = useApi(
@@ -108,7 +109,11 @@ const Dashboard = () => {
 						}}
 					>
 						{coursesLoading ? (
-							<Typography>Loading...</Typography>
+							<Progress
+								sx={{
+									margin: "40px auto",
+								}}
+							/>
 						) : (
 							(showAllCourses
 								? courses
@@ -161,7 +166,11 @@ const Dashboard = () => {
 						}}
 					>
 						{usersLoading ? (
-							<Typography>Loading...</Typography>
+							<Progress
+								sx={{
+									margin: "40px auto",
+								}}
+							/>
 						) : (
 							(showAllUsers ? users : users.slice(0, 7)).map(
 								(user) => (
