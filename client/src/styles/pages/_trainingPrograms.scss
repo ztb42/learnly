@@ -1,0 +1,54 @@
+//Training Programs styles
+
+.training-container {
+  //   display: grid;
+  //   grid-template-columns: repeat(3, 1fr);
+  //   gap: 20px;
+
+  //   @media (max-width: 1024px) {
+  //     grid-template-columns: repeat(2, 1fr);
+  //   }
+
+  //   @media (max-width: 768px) {
+  //     grid-template-columns: 1fr;
+  //   }
+
+  padding: 5%;
+}
+
+.training-card .MuiTypography-root {
+  pointer-events: none;
+}
+
+.training-card {
+  background: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0px 10px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out, box-shadow 0.7s ease-in-out;
+
+  &:hover {
+    transform: scale(1.02) translateY(-5px);
+    box-shadow: 0px 15px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+
+.description-typography {
+  padding: 2em 0;
+}
+
+.deadline-typography {
+  padding: 0 0 1em 0;
+}
+
+.button-right {
+  float: right;
+}
+
+.search-bar {
+  margin: 3% 0;
+}
+
+.search-bar-inside {
+  background-color: #ffffff;
+  border-radius: 5px;
+}
