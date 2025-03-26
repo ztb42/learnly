@@ -1,9 +1,10 @@
 @use "../helpers/variables" as *;
+@use "sass:color";
 
 .navbar {
 	background: white;
 	padding: 0 !important;
-	border-bottom: 1px solid darken($background, 10%);
+	border-bottom: 1px solid color.adjust($background, $lightness: -10%);
 
 	.navbar-container {
 		display: flex;
