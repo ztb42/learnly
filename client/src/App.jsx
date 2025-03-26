@@ -5,6 +5,7 @@ import UserManagement from "./pages/UserManagement";
 import CreateTraining from "./pages/CreateTraining";
 import TrainingPrograms from "./pages/TrainingPrograms";
 import ErrorPage from "./pages/Error";
+import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import CreateUser from "./pages/CreateUser";
 import "./styles/main.scss";
