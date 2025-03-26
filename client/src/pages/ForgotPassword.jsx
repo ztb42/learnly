@@ -37,40 +37,4 @@ const ForgotPassword = () => {
 
 export default ForgotPassword;
 
-// import React, { useState } from "react";
-// import Navbar from "../components/Navbar";
-// import "../styles/pages/ForgotPassword.scss";
 
-// const ForgotPassword = () => {
-//   const [email, setEmail] = useState("");
-
-//   const handleSubmit = (e) => {
-//     e.preventDefault();
-//     console.log("Password reset requested for:", email);
-//   };
-
-//   return (
-//     <>
-
-//       <div className="login-page delete">
-//         <h2>Reset Your Password</h2>
-//         <form className="login-form" onSubmit={handleSubmit}>
-//           <div className="form-group">
-//             <input
-//               type="email"
-//               placeholder="Enter your email"
-//               value={email}
-//               onChange={(e) => setEmail(e.target.value)}
-//               required
-//             />
-//           </div>
-//           <button type="submit" className="submit-button">
-//             Send Reset Link
-//           </button>
-//         </form>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default ForgotPassword;
