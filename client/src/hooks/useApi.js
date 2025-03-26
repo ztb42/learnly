@@ -4,7 +4,10 @@ import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5050";
 
 const useApi = (endpoint) => {
-	const [data, setData] = useState(null);
+	// const [data, setData] = useState(null);
+	//andrew added
+	const [data, setData] = useState([]);
+	//end andrew added
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 

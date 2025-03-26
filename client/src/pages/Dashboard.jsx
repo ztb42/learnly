@@ -16,10 +16,19 @@ import UserCard from "../components/dashboard/UserCard";
 import Progress from "../components/Progress";
 
 const Dashboard = () => {
-  const { data: courses, loading: coursesLoading } = useApi(
-    "/api/training-programs"
-  );
-  const { data: users, loading: usersLoading } = useApi("/api/users");
+//   const { data: courses, loading: coursesLoading } = useApi(
+//     "/api/training-programs"
+//   );
+//   const { data: users, loading: usersLoading } = useApi("/api/users");
+
+
+//andrew added
+const { data: courses = [], loading: coursesLoading } = useApi(
+  "/api/training-programs"
+);
+const { data: users = [], loading: usersLoading } = useApi("/api/users");
+//end andrew added
+
 
   const [showAllCourses, setShowAllCourses] = useState(false);
   const [showAllUsers, setShowAllUsers] = useState(false);
