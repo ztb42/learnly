@@ -8,7 +8,6 @@ import ErrorPage from "./pages/Error";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import CreateUser from "./pages/CreateUser";
-import "./styles/main.scss";
 
 function App() {
 	const router = createBrowserRouter([
@@ -25,8 +24,8 @@ function App() {
 				{ path: "create-training", element: <CreateTraining /> },
 				{ path: "training-programs", element: <TrainingPrograms /> },
 				{ path: "login", element: <Login /> },
-        		{ path: "forgot-password", element: <ForgotPassword /> },
-        		{ path: "create-user", element: <CreateUser /> },
+				{ path: "forgot-password", element: <ForgotPassword /> },
+				{ path: "create-user", element: <CreateUser /> },
 				// Example of adding a new route
 				// {
 				//   path: 'login',
