@@ -1,0 +1,100 @@
+.login-page {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  text-align: center;
+  background-color: none;
+  border-radius: 10px;
+}
+
+.title {
+  font-size: 2rem;
+  margin-bottom: 20px;
+
+  a {
+    text-decoration: none;
+    color: #222;
+  }
+}
+
+.logo-wrapper {
+  margin: 10px auto;
+}
+
+.logo-image {
+  width: 250px;
+  height: auto;
+}
+
+.logo-background {
+  width: 100px;
+  height: 100px;
+  background-image: url("/images/transparentLogo.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  margin: 20px auto;
+}
+
+.form-heading {
+  font-size: 1.25rem;
+  margin-top: none;
+}
+
+.divider {
+  margin: 10px 0 10px;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.form-group input {
+  padding: 12px 15px;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 300px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  box-shadow: none;
+  transition: border 0.2s ease;
+}
+
+.form-group input:focus {
+  border-color: #007bff; // Bootstrap-style blue
+}
+
+.submit-button {
+  margin-top: 10px;
+  padding: 12px 20px;
+  width: 100%;
+  max-width: 300px;
+  font-size: 1rem;
+  color: white;
+  background-color: #007bff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.forgot-password {
+  margin-bottom: 0px;
+    
+  a {
+    font-size: 0.9rem;
+    color: #007bff;
+    text-decoration: none;
+  }
+
+  a:hover {
+    text-decoration: underline;
+  }
+}
