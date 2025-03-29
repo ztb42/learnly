@@ -27,6 +27,15 @@ const Navbar = () => {
           <NavLink to="/" className="nav-link me-auto">
             Dashboard
           </NavLink>
+          <NavLink to="/login" className="nav-link ">
+            Login
+          </NavLink>
+          <NavLink to="/forgot-Password" className="nav-link ">
+            ForgotPassword
+          </NavLink>
+          <NavLink to="/create-User" className="nav-link ">
+            UserCreation
+          </NavLink>
           <NavLink to="/user-management" className="nav-link ">
             Users
           </NavLink>
