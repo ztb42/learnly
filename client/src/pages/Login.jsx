@@ -73,7 +73,7 @@ const Login = () => {
 			<Typography variant="h5" component="p">
 				Login
 			</Typography>
-			<Divider sx={{ width: "70%", my: 5, opacity: 1 }} />
+			<Divider sx={{ width: "100%", my: 5, opacity: 1 }} />
 
 			<Box
 				component="form"
