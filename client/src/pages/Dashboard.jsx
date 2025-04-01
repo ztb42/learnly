@@ -25,15 +25,15 @@ const Dashboard = () => {
 	const [showAllUsers, setShowAllUsers] = useState(false);
 
 	return (
-		<Container className="dashboard" maxWidth="lg" sx={{ my: 4 }}>
-			<Typography component="h1" variant="h4" gutterBottom pt={4}>
+		<Container
+			className="dashboard"
+			maxWidth="lg"
+			sx={{ p: 2, mt: "3rem" }}
+		>
+			<Typography component="h1" variant="h4" gutterBottom>
 				Dashboard
 			</Typography>
-			<TextField
-				label="Search Courses"
-				fullWidth
-				sx={{ mb: 4, bgcolor: "white" }}
-			/>
+			<TextField label="Search Courses" fullWidth sx={{ mb: 4 }} />
 
 			<Typography component="h2" variant="h5" mb={3}>
 				Course Categories

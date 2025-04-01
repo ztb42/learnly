@@ -68,7 +68,17 @@ const CreateTraining = () => {
 	};
 
 	return (
-		<Container maxWidth="sm">
+		<Container
+			maxWidth="sm"
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				alignItems: "center",
+				textAlign: "center",
+				padding: 2,
+				marginTop: "3rem",
+			}}
+		>
 			<Typography variant="h4" gutterBottom>
 				Create Training
 			</Typography>
@@ -120,7 +130,11 @@ const CreateTraining = () => {
 
 			<FormControl fullWidth margin="normal">
 				<InputLabel>Course</InputLabel>
-				<Select name="course" value={formData.course} onChange={handleChange}>
+				<Select
+					name="course"
+					value={formData.course}
+					onChange={handleChange}
+				>
 					{courseOptions.map((course) => (
 						<MenuItem key={course} value={course}>
 							{course}
@@ -138,7 +152,11 @@ const CreateTraining = () => {
 						key={tag.label}
 						label={tag.label}
 						color={tag.color}
-						variant={formData.tags.includes(tag.label) ? "filled" : "outlined"}
+						variant={
+							formData.tags.includes(tag.label)
+								? "filled"
+								: "outlined"
+						}
 						onClick={() => handleTagClick(tag.label)}
 						sx={{ mr: 1, mb: 1 }}
 					/>
@@ -147,7 +165,11 @@ const CreateTraining = () => {
 
 			<FormControl fullWidth margin="normal">
 				<InputLabel>Assign Manager</InputLabel>
-				<Select name="manager" value={formData.manager} onChange={handleChange}>
+				<Select
+					name="manager"
+					value={formData.manager}
+					onChange={handleChange}
+				>
 					{mockManagers.map((m) => (
 						<MenuItem key={m} value={m}>
 							{m}
@@ -158,7 +180,11 @@ const CreateTraining = () => {
 
 			<FormControl fullWidth margin="normal">
 				<InputLabel>Assign Trainer</InputLabel>
-				<Select name="trainer" value={formData.trainer} onChange={handleChange}>
+				<Select
+					name="trainer"
+					value={formData.trainer}
+					onChange={handleChange}
+				>
 					{mockTrainers.map((t) => (
 						<MenuItem key={t} value={t}>
 							{t}
@@ -167,7 +193,12 @@ const CreateTraining = () => {
 				</Select>
 			</FormControl>
 
-			<Button variant="contained" fullWidth sx={{ mt: 3 }} onClick={handleSubmit}>
+			<Button
+				variant="contained"
+				fullWidth
+				sx={{ mt: 3 }}
+				onClick={handleSubmit}
+			>
 				Create Course
 			</Button>
 		</Container>

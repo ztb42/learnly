@@ -1,95 +1,144 @@
 import React, { useState } from "react";
+import {
+	Box,
+	Button,
+	TextField,
+	Typography,
+	Divider,
+	Container,
+} from "@mui/material";
+import { Link } from "react-router";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [usernameError, setUsernameError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+	const [username, setUsername] = useState("");
+	const [password, setPassword] = useState("");
+	const [usernameError, setUsernameError] = useState("");
+	const [passwordError, setPasswordError] = useState("");
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+	const handleSubmit = (e) => {
+		e.preventDefault();
 
-    let hasError = false;
+		let hasError = false;
 
-    if (!username) {
-      setUsernameError("Username is required.");
-      hasError = true;
-    } else {
-      setUsernameError("");
-    }
+		if (!username) {
+			setUsernameError("Username is required.");
+			hasError = true;
+		} else {
+			setUsernameError("");
+		}
 
-    if (!password) {
-      setPasswordError("Password is required.");
-      hasError = true;
-    } else {
-      setPasswordError("");
-    }
+		if (!password) {
+			setPasswordError("Password is required.");
+			hasError = true;
+		} else {
+			setPasswordError("");
+		}
 
-    if (hasError) return;
+		if (hasError) return;
 
-    console.log("Logging in with:", username, password);
-  };
+		console.log("Logging in with:", username, password);
+	};
 
-  return (
-    <div className="login-page">
-      <h1 className="title">
-        <a href="/login">Learnly Training App</a>
-      </h1>
+	return (
+		<Container
+			maxWidth="sm"
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				alignItems: "center",
+				textAlign: "center",
+				padding: 2,
+				marginTop: "3rem",
+			}}
+		>
+			<Typography variant="h4" component="h1" gutterBottom>
+				Learnly Training App
+			</Typography>
 
-      <div className="logo-wrapper">
-        <img src="/transparentLogo.png" alt="Logo" className="logo-image" />
-      </div>
+			<Box
+				component="div"
+				sx={{
+					display: "flex",
+					justifyContent: "center",
+					marginBottom: 2,
+				}}
+			>
+				<img
+					src="/transparentLogo.png"
+					alt="Logo"
+					style={{ width: "180px", height: "auto" }}
+				/>
+			</Box>
 
-      <div className="logo-background" />
+			<Typography variant="h5" component="p">
+				Login
+			</Typography>
+			<Divider sx={{ width: "70%", my: 5, opacity: 1 }} />
 
-      <p className="form-heading">Login</p>
-      <hr className="divider" />
+			<Box
+				component="form"
+				onSubmit={handleSubmit}
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					gap: 2,
+					width: "100%",
+				}}
+			>
+				<TextField
+					label="Username"
+					variant="outlined"
+					fullWidth
+					value={username}
+					onChange={(e) => {
+						setUsername(e.target.value);
+						if (e.target.value) setUsernameError("");
+					}}
+					error={!!usernameError}
+					helperText={usernameError}
+				/>
 
-      <form className="login-form" onSubmit={handleSubmit}>
-        <div className="form-group">
-          <input
-            type="text"
-            name="username"
-            placeholder="Enter Username"
-            value={username}
-            onChange={(e) => {
-              setUsername(e.target.value);
-              if (e.target.value) setUsernameError("");
-            }}
-          />
-          {usernameError && (
-            <div className="error-message">{usernameError}</div>
-          )}
-        </div>
-        <br />
+				<TextField
+					label="Password"
+					type="password"
+					variant="outlined"
+					fullWidth
+					value={password}
+					onChange={(e) => {
+						setPassword(e.target.value);
+						if (e.target.value) setPasswordError("");
+					}}
+					error={!!passwordError}
+					helperText={passwordError}
+				/>
 
-        <div className="form-group">
-          <input
-            type="password"
-            name="password"
-            placeholder="Enter Password"
-            value={password}
-            onChange={(e) => {
-              setPassword(e.target.value);
-              if (e.target.value) setPasswordError("");
-            }}
-          />
-          {passwordError && (
-            <div className="error-message">{passwordError}</div>
-          )}
-        </div>
+				<Box
+					sx={{
+						display: "flex",
+						justifyContent: "flex-end",
+					}}
+				>
+					<Link to="/forgot-password" variant="body2">
+						Forgot Password?
+					</Link>
+				</Box>
 
-        <div className="forgot-password">
-          <a href="/forgot-password">Forgot Password?</a>
-        </div>
-        <br />
-
-        <button type="submit" className="submit-button">
-          Login
-        </button>
-      </form>
-    </div>
-  );
+				<Button
+					type="submit"
+					variant="contained"
+					color="primary"
+					sx={{
+						marginTop: 2,
+						mx: "auto",
+						width: "fit-content",
+						px: 4,
+					}}
+				>
+					Login
+				</Button>
+			</Box>
+		</Container>
+	);
 };
 
 export default Login;

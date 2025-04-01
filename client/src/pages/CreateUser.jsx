@@ -1,4 +1,15 @@
 import React, { useState } from "react";
+import {
+	Box,
+	Button,
+	TextField,
+	Typography,
+	MenuItem,
+	Select,
+	InputLabel,
+	FormControl,
+	Container,
+} from "@mui/material";
 
 const CreateUser = () => {
 	const [form, setForm] = useState({
@@ -10,14 +21,33 @@ const CreateUser = () => {
 		confirmPassword: "",
 		role: "Employee",
 	});
+	const [errors, setErrors] = useState({});
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
 		setForm({ ...form, [name]: value });
+		setErrors({ ...errors, [name]: "" }); // Clear error for the field being updated
 	};
 
 	const handleSubmit = (e) => {
 		e.preventDefault();
+
+		// Validate all fields
+		const newErrors = {};
+		Object.keys(form).forEach((key) => {
+			if (!form[key]) {
+				newErrors[key] = `${
+					key.charAt(0).toUpperCase() + key.slice(1)
+				} is required.`;
+			}
+		});
+
+		if (Object.keys(newErrors).length > 0) {
+			setErrors(newErrors);
+			return;
+		}
+
+		// Check if passwords match
 		if (form.password !== form.confirmPassword) {
 			alert("Passwords do not match!");
 			return;
@@ -36,69 +66,128 @@ const CreateUser = () => {
 			confirmPassword: "",
 			role: "Employee",
 		});
+		setErrors({});
 	};
 
 	return (
-		<div className="create-user-page">
-			<h2>Create User</h2>
-			<form className="create-user-form" onSubmit={handleSubmit}>
-				<input
-					type="text"
+		<Container
+			maxWidth="sm"
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				alignItems: "center",
+				textAlign: "center",
+				padding: 2,
+				marginTop: "3rem",
+			}}
+		>
+			<Typography variant="h4" component="h1" mb={3}>
+				Create User
+			</Typography>
+			<Box
+				component="form"
+				onSubmit={handleSubmit}
+				sx={{
+					display: "flex",
+					flexDirection: "column",
+					width: "100%",
+					gap: 3,
+				}}
+			>
+				<TextField
+					label="Username"
 					name="username"
-					placeholder="Username"
+					fullWidth
 					value={form.username}
 					onChange={handleChange}
-					required
+					error={!!errors.username}
+					helperText={errors.username}
 				/>
-				<input
-					type="text"
+				<TextField
+					label="First Name"
 					name="firstName"
-					placeholder="First Name"
+					fullWidth
 					value={form.firstName}
 					onChange={handleChange}
-					required
+					error={!!errors.firstName}
+					helperText={errors.firstName}
 				/>
-				<input
-					type="text"
+				<TextField
+					label="Last Name"
 					name="lastName"
-					placeholder="Last Name"
+					fullWidth
 					value={form.lastName}
 					onChange={handleChange}
-					required
+					error={!!errors.lastName}
+					helperText={errors.lastName}
 				/>
-				<input
-					type="email"
+				<TextField
+					label="Email"
 					name="email"
-					placeholder="Email"
+					type="email"
+					fullWidth
 					value={form.email}
 					onChange={handleChange}
-					required
+					error={!!errors.email}
+					helperText={errors.email}
 				/>
-				<input
-					type="password"
+				<TextField
+					label="Password"
 					name="password"
-					placeholder="Password"
+					type="password"
+					fullWidth
 					value={form.password}
 					onChange={handleChange}
-					required
+					error={!!errors.password}
+					helperText={errors.password}
 				/>
-				<input
-					type="password"
+				<TextField
+					label="Confirm Password"
 					name="confirmPassword"
-					placeholder="Confirm Password"
+					type="password"
+					fullWidth
 					value={form.confirmPassword}
 					onChange={handleChange}
-					required
+					error={!!errors.confirmPassword}
+					helperText={errors.confirmPassword}
 				/>
-				<select name="role" value={form.role} onChange={handleChange}>
-					<option>Employee</option>
-					<option>Manager</option>
-					<option>Trainer</option>
-					<option>Admin</option>
-				</select>
-				<button type="submit">Submit</button>
-			</form>
-		</div>
+				<FormControl
+					fullWidth
+					sx={{ textAlign: "left" }}
+					error={!!errors.role}
+				>
+					<InputLabel id="role-label">Role</InputLabel>
+					<Select
+						labelId="role-label"
+						name="role"
+						value={form.role}
+						onChange={handleChange}
+						label="Role"
+					>
+						<MenuItem value="Employee">Employee</MenuItem>
+						<MenuItem value="Manager">Manager</MenuItem>
+						<MenuItem value="Trainer">Trainer</MenuItem>
+						<MenuItem value="Admin">Admin</MenuItem>
+					</Select>
+					<Typography variant="caption" color="error">
+						{errors.role}
+					</Typography>
+				</FormControl>
+				<Button
+					type="submit"
+					variant="contained"
+					color="primary"
+					sx={{
+						marginTop: 2,
+						mx: "auto",
+						width: "fit-content",
+						px: 4,
+					}}
+				>
+					Submit
+				</Button>
+			</Box>
+		</Container>
 	);
 };
 

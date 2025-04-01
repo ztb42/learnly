@@ -4,10 +4,7 @@ import axios from "axios";
 const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5050";
 
 const useApi = (endpoint) => {
-	// const [data, setData] = useState(null);
-	//andrew added
 	const [data, setData] = useState([]);
-	//end andrew added
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 
@@ -29,6 +26,20 @@ const useApi = (endpoint) => {
 
 		fetchData();
 	}, [endpoint]);
+
+	// Function to create (add) an item
+	const createItem = async (newData) => {
+		try {
+			const response = await axios.post(
+				`${BASE_URL}${endpoint}`,
+				newData
+			);
+			// Optionally update the local state after creation
+			setData((prevData) => [...prevData, response.data]);
+		} catch (err) {
+			setError(err.response?.data?.message || err.message);
+		}
+	};
 
 	// Function to delete an item
 	const deleteItem = async (id) => {
@@ -57,7 +68,7 @@ const useApi = (endpoint) => {
 		}
 	};
 
-	return { data, loading, error, deleteItem, editItem };
+	return { data, loading, error, createItem, deleteItem, editItem };
 };
 
 export default useApi;

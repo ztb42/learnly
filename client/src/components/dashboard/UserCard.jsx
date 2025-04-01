@@ -9,9 +9,7 @@ const UserCard = ({ user, sx }) => {
 			<Box sx={{ display: "flex", alignItems: "center" }}>
 				<ColoredAvatar name={name} />
 				<Box sx={{ ml: 2, flexGrow: 1 }}>
-					<Typography variant="h6" fontWeight={600}>
-						{name}
-					</Typography>
+					<Typography variant="body1">{name}</Typography>
 					<Typography variant="body2" color="textSecondary">
 						{user.username}
 					</Typography>
