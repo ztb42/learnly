@@ -15,7 +15,9 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-const corsOptions = { origin: "https://learnlywsu.netlify.app" };
+const corsOptions = {
+	origin: ["https://learnlywsu.netlify.app", "http://localhost:5173"],
+};
 app.use(cors(corsOptions));
 
 const connectDB = async () => {
