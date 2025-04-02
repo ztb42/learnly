@@ -10,41 +10,41 @@
 // 	ListItemText,
 // } from "@mui/material";
 
-// const CourseDescription = () => {
+// const TrainingDescription = () => {
 // 	const { id } = useParams();
-// 	const [course, setCourse] = useState(null);
-// 	const [courseList, setCourseList] = useState([]);
+// 	const [training, setTraining] = useState(null);
+// 	const [trainingList, setTrainingList] = useState([]);
 
 // 	useEffect(() => {
 // 		// Obtener el curso actual
 // 		fetch(`http://localhost:5000/trainings/${id}`)
 // 			.then((res) => res.json())
-// 			.then(setCourse);
+// 			.then(setTraining);
 
 // 		// Obtener todos los cursos
 // 		fetch("http://localhost:5000/trainings")
 // 			.then((res) => res.json())
-// 			.then(setCourseList);
+// 			.then(setTrainingList);
 // 	}, [id]);
 
-// 	if (!course) return <Typography>Loading...</Typography>;
+// 	if (!training) return <Typography>Loading...</Typography>;
 
 // 	return (
 // 		<Container maxWidth="md">
 // 			<Typography variant="h4" gutterBottom>
-// 				{course.title}
+// 				{training.title}
 // 			</Typography>
-// 			<Typography>Date: {course.date}</Typography>
+// 			<Typography>Date: {training.date}</Typography>
 // 			<Typography>
-// 				Time: {course.startTime} - {course.endTime}
+// 				Time: {training.startTime} - {training.endTime}
 // 			</Typography>
-// 			<Typography>Description: {course.description}</Typography>
-// 			<Typography>Course: {course.course}</Typography>
-// 			<Typography>Manager: {course.manager}</Typography>
-// 			<Typography>Trainer: {course.trainer}</Typography>
+// 			<Typography>Description: {training.description}</Typography>
+// 			<Typography>Training: {training.training}</Typography>
+// 			<Typography>Manager: {training.manager}</Typography>
+// 			<Typography>Trainer: {training.trainer}</Typography>
 // 			<Box mt={2}>
 // 				<Typography>Tags:</Typography>
-// 				{course.tags?.map((tag) => (
+// 				{training.tags?.map((tag) => (
 // 					<Box key={tag} component="span" mr={1}>
 // 						#{tag}
 // 					</Box>
@@ -53,9 +53,9 @@
 
 // 			<Divider sx={{ my: 4 }} />
 
-// 			<Typography variant="h5">All Courses</Typography>
+// 			<Typography variant="h5">All Trainings</Typography>
 // 			<List>
-// 				{courseList.map((c) => (
+// 				{trainingList.map((c) => (
 // 					<ListItem key={c._id}>
 // 						<ListItemText
 // 							primary={c.title}
@@ -68,4 +68,4 @@
 // 	);
 // };
 
-// export default CourseDescription;
+// export default TrainingDescription;

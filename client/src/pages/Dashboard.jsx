@@ -11,18 +11,20 @@ import {
 import CategoryCard from "../components/dashboard/CategoryCard";
 import useApi from "../hooks/useApi";
 import AddIcon from "@mui/icons-material/Add";
-import CourseCard from "../components/dashboard/CourseCard";
+import TrainingCard from "../components/dashboard/TrainingCard";
 import UserCard from "../components/dashboard/UserCard";
 import Progress from "../components/Progress";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
-	const { data: courses, loading: coursesLoading } = useApi(
+	const { data: trainings, loading: trainingsLoading } = useApi(
 		"/api/training-programs"
 	);
 	const { data: users, loading: usersLoading } = useApi("/api/users");
 
 	const currentUserRole = "Admin"; // TODO: Replace with actual user role from context or state
+
+	console.log(users);
 
 	return (
 		<Container
@@ -34,10 +36,10 @@ const Dashboard = () => {
 				{currentUserRole} Dashboard
 			</Typography>
 
-			<TextField label="Search Courses" fullWidth sx={{ mb: 4 }} />
+			<TextField label="Search Trainings" fullWidth sx={{ mb: 4 }} />
 
 			<Typography component="h2" variant="h5" mb={3}>
-				Course Categories
+				Training Categories
 			</Typography>
 			<Grid2 container spacing={8} mb={6}>
 				<Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
@@ -73,9 +75,9 @@ const Dashboard = () => {
 			</Grid2>
 
 			<Grid2 container spacing={8} sx={{ minHeight: "550px" }}>
-				<CoursesSection
-					courses={courses}
-					coursesLoading={coursesLoading}
+				<TrainingsSection
+					trainings={trainings}
+					trainingsLoading={trainingsLoading}
 				/>
 
 				<UsersSection users={users} usersLoading={usersLoading} />
@@ -84,7 +86,7 @@ const Dashboard = () => {
 	);
 };
 
-const CoursesSection = ({ courses, coursesLoading }) => {
+const TrainingsSection = ({ trainings, trainingsLoading }) => {
 	return (
 		<Grid2
 			size={{ xs: 12, sm: 6 }}
@@ -97,7 +99,7 @@ const CoursesSection = ({ courses, coursesLoading }) => {
 				}}
 			>
 				<Typography component="h2" variant="h5" sx={{ flexGrow: 1 }}>
-					Courses
+					Trainings
 				</Typography>
 				<Link to="/create-training">
 					<IconButton sx={{ mr: 2 }}>
@@ -118,17 +120,20 @@ const CoursesSection = ({ courses, coursesLoading }) => {
 					flexDirection: "column",
 				}}
 			>
-				{coursesLoading ? (
+				{trainingsLoading ? (
 					<Progress
 						sx={{
 							margin: "40px auto",
 						}}
 					/>
 				) : (
-					courses
+					trainings
 						.slice(0, 4)
-						.map((course) => (
-							<CourseCard key={course._id} course={course} />
+						.map((training) => (
+							<TrainingCard
+								key={training._id}
+								training={training}
+							/>
 						))
 				)}
 			</Box>

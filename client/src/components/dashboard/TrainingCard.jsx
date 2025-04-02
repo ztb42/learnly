@@ -8,13 +8,13 @@ import {
 } from "@mui/material";
 import ClockIcon from "@mui/icons-material/AccessTime";
 
-const CourseCard = ({ course }) => {
+const TrainingCard = ({ training }) => {
 	return (
 		<Card variant="outlined" sx={{ mt: 2 }}>
 			<CardContent>
-				<Typography variant="h6">{course.title}</Typography>
+				<Typography variant="h6">{training.title}</Typography>
 				<Typography variant="body2" sx={{ color: "darkgray" }}>
-					{course.description}
+					{training.description}
 				</Typography>
 
 				<Divider sx={{ my: 2, opacity: 1 }} />
@@ -29,7 +29,7 @@ const CourseCard = ({ course }) => {
 							marginLeft: "1rem",
 						}}
 					>
-						Duration: {course.duration} weeks
+						Duration: {training.duration} weeks
 					</Typography>
 					<Chip label="Enrolled" color="primary" />
 				</Box>
@@ -38,4 +38,4 @@ const CourseCard = ({ course }) => {
 	);
 };
 
-export default CourseCard;
+export default TrainingCard;

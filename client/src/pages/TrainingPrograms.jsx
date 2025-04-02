@@ -26,7 +26,7 @@ const TrainingPrograms = () => {
 
 	const handleEdit = (trainingId) => {
 		console.log("Editing training program with ID:", trainingId);
-		//add form to edit course
+		//add form to edit training
 	};
 
 	return (
@@ -36,11 +36,11 @@ const TrainingPrograms = () => {
 			sx={{ p: 2, mt: "3rem" }}
 		>
 			<Typography component="h1" variant="h4" gutterBottom>
-				Courses
+				Trainings
 			</Typography>
 
 			<TextField
-				label="Search Courses"
+				label="Search Trainings"
 				fullWidth
 				sx={{ mb: 4 }}
 				value={searchQuery}
@@ -80,8 +80,8 @@ const TrainingPrograms = () => {
 										Duration: {training.duration} weeks
 									</Typography>
 									<Typography variant="body2">
-										Manager ID: {training.manager}{" "}
-										{/* Display as ID for now */}
+										Manager: {training.manager.firstName}{" "}
+										{training.manager.lastName}
 									</Typography>
 									<Typography
 										className="deadline-typography"

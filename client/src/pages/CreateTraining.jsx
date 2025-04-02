@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 
-const courseOptions = ["Website", "Cyber Security", "Marketing"];
+const trainingOptions = ["Website", "Cyber Security", "Marketing"];
 const tagOptions = [
 	{ label: "UI Design", color: "primary" },
 	{ label: "Website", color: "secondary" },
@@ -31,7 +31,7 @@ const CreateTraining = () => {
 		startTime: "",
 		endTime: "",
 		description: "",
-		course: "",
+		training: "",
 		tags: [],
 		manager: "",
 		trainer: "",
@@ -129,15 +129,15 @@ const CreateTraining = () => {
 			/>
 
 			<FormControl fullWidth margin="normal">
-				<InputLabel>Course</InputLabel>
+				<InputLabel>Training</InputLabel>
 				<Select
-					name="course"
-					value={formData.course}
+					name="training"
+					value={formData.training}
 					onChange={handleChange}
 				>
-					{courseOptions.map((course) => (
-						<MenuItem key={course} value={course}>
-							{course}
+					{trainingOptions.map((training) => (
+						<MenuItem key={training} value={training}>
+							{training}
 						</MenuItem>
 					))}
 				</Select>
@@ -199,7 +199,7 @@ const CreateTraining = () => {
 				sx={{ mt: 3 }}
 				onClick={handleSubmit}
 			>
-				Create Course
+				Create Training
 			</Button>
 		</Container>
 	);

@@ -17,7 +17,7 @@ router.post("/", async (req, res) => {
 // Get all Training Programs
 router.get("/", async (req, res) => {
 	try {
-		const trainings = await TrainingProgram.find();
+		const trainings = await TrainingProgram.find().populate("manager");
 		res.json(trainings);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
@@ -27,7 +27,9 @@ router.get("/", async (req, res) => {
 // Get a single Training Program
 router.get("/:id", async (req, res) => {
 	try {
-		const training = await TrainingProgram.findById(req.params.id);
+		const training = await TrainingProgram.findById(req.params.id).populate(
+			"manager"
+		);
 		if (!training)
 			return res
 				.status(404)
