@@ -1,7 +1,9 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes.js";
 import roleRoutes from "./routes/roleRoutes.js";
 import trainingProgramRoutes from "./routes/trainingProgramRoutes.js";
@@ -10,13 +12,14 @@ import assignmentRoutes from "./routes/assignmentRoutes.js";
 import enrollmentRoutes from "./routes/enrollmentRoutes.js";
 import completionStatusRoutes from "./routes/completionStatusRoutes.js";
 
-dotenv.config();
+
 
 const app = express();
 app.use(express.json());
 
 const corsOptions = {
 	origin: ["https://learnlywsu.netlify.app", "http://localhost:5173"],
+	credentials: true,
 };
 app.use(cors(corsOptions));
 
