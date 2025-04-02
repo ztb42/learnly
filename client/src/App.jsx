@@ -20,12 +20,37 @@ function App() {
 					index: true,
 					element: <Dashboard />,
 				},
-				{ path: "user-management", element: <UserManagement /> },
-				{ path: "create-training", element: <CreateTraining /> },
-				{ path: "training-programs", element: <TrainingPrograms /> },
+				{
+					path: "users",
+					children: [
+						{
+							index: true,
+							element: <UserManagement />,
+						},
+						{
+							path: "new",
+							element: <CreateUser />,
+						},
+						// {
+						// 	path: ":userId",
+						// }
+					],
+				},
+				{
+					path: "training-programs",
+					children: [
+						{
+							index: true,
+							element: <TrainingPrograms />,
+						},
+						{
+							path: "new",
+							element: <CreateTraining />,
+						},
+					],
+				},
 				{ path: "login", element: <Login /> },
 				{ path: "forgot-password", element: <ForgotPassword /> },
-				{ path: "create-user", element: <CreateUser /> },
 				// Example of adding a new route
 				// {
 				//   path: 'login',

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
 	Box,
 	Button,
@@ -14,11 +14,9 @@ import AddIcon from "@mui/icons-material/Add";
 import CourseCard from "../components/dashboard/CourseCard";
 import UserCard from "../components/dashboard/UserCard";
 import Progress from "../components/Progress";
+import { Link } from "react-router-dom";
 
 const Dashboard = () => {
-	const [showAllCourses, setShowAllCourses] = useState(false);
-	const [showAllUsers, setShowAllUsers] = useState(false);
-
 	const { data: courses, loading: coursesLoading } = useApi(
 		"/api/training-programs"
 	);
@@ -78,27 +76,15 @@ const Dashboard = () => {
 				<CoursesSection
 					courses={courses}
 					coursesLoading={coursesLoading}
-					showAllCourses={showAllCourses}
-					setShowAllCourses={setShowAllCourses}
 				/>
 
-				<UsersSection
-					users={users}
-					usersLoading={usersLoading}
-					showAllUsers={showAllUsers}
-					setShowAllUsers={setShowAllUsers}
-				/>
+				<UsersSection users={users} usersLoading={usersLoading} />
 			</Grid2>
 		</Container>
 	);
 };
 
-const CoursesSection = ({
-	courses,
-	coursesLoading,
-	showAllCourses,
-	setShowAllCourses,
-}) => {
+const CoursesSection = ({ courses, coursesLoading }) => {
 	return (
 		<Grid2
 			size={{ xs: 12, sm: 6 }}
@@ -113,16 +99,16 @@ const CoursesSection = ({
 				<Typography component="h2" variant="h5" sx={{ flexGrow: 1 }}>
 					Courses
 				</Typography>
-				<IconButton sx={{ mr: 2 }}>
-					<AddIcon />
-				</IconButton>
-				<Button
-					variant="contained"
-					color="primary"
-					onClick={() => setShowAllCourses(!showAllCourses)}
-				>
-					{showAllCourses ? "Show Less" : "View All"}
-				</Button>
+				<Link to="/create-training">
+					<IconButton sx={{ mr: 2 }}>
+						<AddIcon />
+					</IconButton>
+				</Link>
+				<Link to="/training-programs">
+					<Button variant="contained" color="primary">
+						View All
+					</Button>
+				</Link>
 			</Box>
 
 			<Box
@@ -139,23 +125,18 @@ const CoursesSection = ({
 						}}
 					/>
 				) : (
-					(showAllCourses ? courses : courses.slice(0, 4)).map(
-						(course) => (
+					courses
+						.slice(0, 4)
+						.map((course) => (
 							<CourseCard key={course._id} course={course} />
-						)
-					)
+						))
 				)}
 			</Box>
 		</Grid2>
 	);
 };
 
-const UsersSection = ({
-	users,
-	usersLoading,
-	showAllUsers,
-	setShowAllUsers,
-}) => {
+const UsersSection = ({ users, usersLoading }) => {
 	return (
 		<Grid2
 			size={{ xs: 12, sm: 6 }}
@@ -174,16 +155,16 @@ const UsersSection = ({
 				<Typography component="h2" variant="h5" sx={{ flexGrow: 1 }}>
 					Users
 				</Typography>
-				<IconButton sx={{ mr: 2 }}>
-					<AddIcon />
-				</IconButton>
-				<Button
-					variant="contained"
-					color="primary"
-					onClick={() => setShowAllUsers(!showAllUsers)}
-				>
-					{showAllUsers ? "Show Less" : "View All"}
-				</Button>
+				<Link to="/create-user">
+					<IconButton sx={{ mr: 2 }}>
+						<AddIcon />
+					</IconButton>
+				</Link>
+				<Link to="/users">
+					<Button variant="contained" color="primary">
+						View All
+					</Button>
+				</Link>
 			</Box>
 
 			<Box
@@ -200,9 +181,9 @@ const UsersSection = ({
 						}}
 					/>
 				) : (
-					(showAllUsers ? users : users.slice(0, 7)).map((user) => (
-						<UserCard key={user._id} user={user} />
-					))
+					users
+						.slice(0, 7)
+						.map((user) => <UserCard key={user._id} user={user} />)
 				)}
 			</Box>
 		</Grid2>

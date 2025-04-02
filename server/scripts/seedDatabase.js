@@ -36,14 +36,28 @@ const seedDatabase = async () => {
 		);
 
 		// Generate users
-		const users = [];
+		const users = [
+			{
+				firstName: "John",
+				lastName: "Admin",
+				username: "admin",
+				email: "admin@example.com",
+				password: await bcrypt.hash("password", 10),
+				role: roleDocs[0]._id, // Admin role
+			},
+		];
 		for (const role of roleDocs) {
 			for (let i = 0; i < 3; i++) {
 				const hashedPassword = await bcrypt.hash("password123", 10);
+				const firstName = faker.person.firstName();
+				const lastName = faker.person.lastName();
 				users.push({
-					firstName: faker.person.firstName(),
-					lastName: faker.person.lastName(),
-					username: faker.internet.username(),
+					firstName: firstName,
+					lastName: lastName,
+					username: faker.internet.username({
+						firstName: firstName,
+						lastName: lastName,
+					}),
 					email: faker.internet.email(),
 					password: hashedPassword,
 					role: role._id, // Assign the current role
@@ -74,17 +88,38 @@ const seedDatabase = async () => {
 		}
 
 		// Generate training programs
-		const trainingPrograms = [];
-		for (let i = 0; i < 5; i++) {
-			trainingPrograms.push({
-				title: faker.lorem.words(3),
-				description: faker.lorem.sentence(),
-				manager:
-					managers[Math.floor(Math.random() * managers.length)]._id, // Assign a random manager
-				duration: faker.number.int({ min: 1, max: 12 }), // Random duration (weeks/months)
-				deadline: faker.date.future(), // Future deadline
-			});
-		}
+		const trainingPrograms = [
+			{
+				title: "Web Development Fundamentals",
+				description:
+					"An introduction to building websites using HTML, CSS, and JavaScript.",
+			},
+			{
+				title: "Advanced Algorithms",
+				description:
+					"Dive deep into advanced algorithmic concepts like dynamic programming and graph theory.",
+			},
+			{
+				title: "Database Management Systems",
+				description:
+					"Learn about relational databases, SQL, and modern database technologies.",
+			},
+			{
+				title: "Introduction to Artificial Intelligence",
+				description:
+					"Explore the basics of AI, including machine learning and neural networks.",
+			},
+			{
+				title: "Full-Stack Web Development",
+				description:
+					"Learn both frontend and backend technologies, including React, Node.js, Express, and MongoDB.",
+			},
+		].map((program) => ({
+			...program,
+			manager: managers[Math.floor(Math.random() * managers.length)]._id, // Assign a random manager
+			duration: faker.number.int({ min: 1, max: 12 }), // Random duration (weeks/months)
+			deadline: faker.date.future(), // Future deadline
+		}));
 
 		const trainingProgramDocs = await TrainingProgram.insertMany(
 			trainingPrograms

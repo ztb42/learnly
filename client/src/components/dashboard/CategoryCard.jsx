@@ -64,7 +64,7 @@ const CategoryCard = ({ category }) => {
 							color: "darkgray",
 						}}
 					>
-						{category.projects} Projects
+						{category.projects} Courses
 					</Typography>
 				</Box>
 			</Box>

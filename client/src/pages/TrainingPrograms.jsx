@@ -7,57 +7,21 @@ import {
 	TextField,
 	Button,
 } from "@mui/material";
+import useApi from "../hooks/useApi";
+import Progress from "../components/Progress";
 
 const TrainingPrograms = () => {
-	// Dummy Training Data
-	const [trainings] = useState([
-		{
-			_id: "65f123abc987654321000001",
-			Title: "Web Development Fundamentals",
-			Description:
-				"An introduction to building websites using HTML, CSS, and JavaScript.",
-			Duration: 6,
-			Manager: "65fabc321987654321000002",
-			Deadline: new Date("2025-04-15"),
-		},
-		{
-			_id: "65f123abc987654321000002",
-			Title: "Advanced Algorithms",
-			Description:
-				"Dive deep into advanced algorithmic concepts like dynamic programming and graph theory.",
-			Duration: 8,
-			Manager: "65fabc321987654321000003",
-			Deadline: new Date("2025-05-01"),
-		},
-		{
-			_id: "65f123abc987654321000003",
-			Title: "Database Management Systems",
-			Description:
-				"Learn about relational databases, SQL, and modern database technologies.",
-			Duration: 4,
-			Manager: "65fabc321987654321000004",
-			Deadline: new Date("2025-04-20"),
-		},
-		{
-			_id: "65f123abc987654321000004",
-			Title: "Introduction to Artificial Intelligence",
-			Description:
-				"Explore the basics of AI, including machine learning and neural networks.",
-			Duration: 6,
-			Manager: "65fabc321987654321000005",
-			Deadline: new Date("2025-06-10"),
-		},
-	]);
+	const { data: trainings, loading } = useApi("/api/training-programs");
 
 	const [searchQuery, setSearchQuery] = useState("");
 
 	// Filter trainings based on search
 	const filteredTrainings = trainings.filter(
 		(training) =>
-			training.Title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-			training.Description.toLowerCase().includes(
-				searchQuery.toLowerCase()
-			)
+			training.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+			training.description
+				.toLowerCase()
+				.includes(searchQuery.toLowerCase())
 	);
 
 	const handleEdit = (trainingId) => {
@@ -83,8 +47,20 @@ const TrainingPrograms = () => {
 				onChange={(e) => setSearchQuery(e.target.value)}
 			/>
 
-			{filteredTrainings.length === 0 ? (
-				<p>No training programs found.</p>
+			{loading && (
+				<Progress
+					sx={{ marginTop: "3rem", mx: "auto", display: "block" }}
+				/>
+			)}
+
+			{!loading && filteredTrainings.length === 0 ? (
+				<Typography
+					variant="body1"
+					color="textSecondary"
+					align="center"
+				>
+					No training programs found.
+				</Typography>
 			) : (
 				<div className="row">
 					{filteredTrainings.map((training) => (
@@ -92,19 +68,19 @@ const TrainingPrograms = () => {
 							<Card className="training-card h-100 d-flex flex-column">
 								<CardContent className="d-flex flex-column flex-grow-1">
 									<Typography variant="h5">
-										{training.Title}
+										{training.title}
 									</Typography>
 									<Typography
 										className="description-typography"
 										variant="body2"
 									>
-										{training.Description}
+										{training.description}
 									</Typography>
 									<Typography variant="body2">
-										Duration: {training.Duration} weeks
+										Duration: {training.duration} weeks
 									</Typography>
 									<Typography variant="body2">
-										Manager ID: {training.Manager}{" "}
+										Manager ID: {training.manager}{" "}
 										{/* Display as ID for now */}
 									</Typography>
 									<Typography
@@ -112,7 +88,9 @@ const TrainingPrograms = () => {
 										variant="body2"
 									>
 										Deadline:{" "}
-										{training.Deadline.toLocaleDateString()}
+										{new Date(
+											training.deadline
+										).toLocaleDateString()}
 									</Typography>
 
 									{/* Edit Button */}

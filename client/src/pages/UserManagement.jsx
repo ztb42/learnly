@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import useApi from "../hooks/useApi";
 import UserCard from "../components/dashboard/UserCard";
 import Progress from "../components/Progress";
+import { Link } from "react-router";
 
 const UserManagement = () => {
 	const { data: users, loading: usersLoading } = useApi("/api/users");
@@ -118,9 +119,11 @@ const UserManagement = () => {
 						justifyContent="space-between"
 						alignItems="center"
 					>
-						<Button variant="contained" color="primary">
-							Add User
-						</Button>
+						<Link to="/create-user">
+							<Button variant="contained" color="primary">
+								Add User
+							</Button>
+						</Link>
 						<Pagination
 							count={1}
 							page={page}
