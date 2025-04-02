@@ -16,13 +16,15 @@ import UserCard from "../components/dashboard/UserCard";
 import Progress from "../components/Progress";
 
 const Dashboard = () => {
+	const [showAllCourses, setShowAllCourses] = useState(false);
+	const [showAllUsers, setShowAllUsers] = useState(false);
+
 	const { data: courses, loading: coursesLoading } = useApi(
 		"/api/training-programs"
 	);
 	const { data: users, loading: usersLoading } = useApi("/api/users");
 
-	const [showAllCourses, setShowAllCourses] = useState(false);
-	const [showAllUsers, setShowAllUsers] = useState(false);
+	const currentUserRole = "Admin"; // TODO: Replace with actual user role from context or state
 
 	return (
 		<Container
@@ -31,8 +33,9 @@ const Dashboard = () => {
 			sx={{ p: 2, mt: "3rem" }}
 		>
 			<Typography component="h1" variant="h4" gutterBottom>
-				Dashboard
+				{currentUserRole} Dashboard
 			</Typography>
+
 			<TextField label="Search Courses" fullWidth sx={{ mb: 4 }} />
 
 			<Typography component="h2" variant="h5" mb={3}>
@@ -72,116 +75,137 @@ const Dashboard = () => {
 			</Grid2>
 
 			<Grid2 container spacing={8} sx={{ minHeight: "550px" }}>
-				<Grid2
-					size={{ xs: 12, sm: 6 }}
-					sx={{ display: "flex", flexDirection: "column" }}
-				>
-					<Box
-						sx={{
-							display: "flex",
-							justifyContent: "space-between",
-						}}
-					>
-						<Typography
-							component="h2"
-							variant="h5"
-							sx={{ flexGrow: 1 }}
-						>
-							Courses
-						</Typography>
-						<IconButton sx={{ mr: 2 }}>
-							<AddIcon />
-						</IconButton>
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={() => setShowAllCourses(!showAllCourses)}
-						>
-							{showAllCourses ? "Show Less" : "View All"}
-						</Button>
-					</Box>
+				<CoursesSection
+					courses={courses}
+					coursesLoading={coursesLoading}
+					showAllCourses={showAllCourses}
+					setShowAllCourses={setShowAllCourses}
+				/>
 
-					<Box
-						sx={{
-							flexGrow: 1,
-							display: "flex",
-							flexDirection: "column",
-						}}
-					>
-						{coursesLoading ? (
-							<Progress
-								sx={{
-									margin: "40px auto",
-								}}
-							/>
-						) : (
-							(showAllCourses
-								? courses
-								: courses.slice(0, 4)
-							).map((course) => (
-								<CourseCard key={course._id} course={course} />
-							))
-						)}
-					</Box>
-				</Grid2>
-
-				<Grid2
-					size={{ xs: 12, sm: 6 }}
-					sx={{
-						display: "flex",
-						flexDirection: "column",
-						justifyContent: "space-between",
-					}}
-				>
-					<Box
-						sx={{
-							display: "flex",
-							justifyContent: "space-between",
-						}}
-					>
-						<Typography
-							component="h2"
-							variant="h5"
-							sx={{ flexGrow: 1 }}
-						>
-							Users
-						</Typography>
-						<IconButton sx={{ mr: 2 }}>
-							<AddIcon />
-						</IconButton>
-						<Button
-							variant="contained"
-							color="primary"
-							onClick={() => setShowAllUsers(!showAllUsers)}
-						>
-							{showAllUsers ? "Show Less" : "View All"}
-						</Button>
-					</Box>
-
-					<Box
-						sx={{
-							flexGrow: 1,
-							display: "flex",
-							flexDirection: "column",
-						}}
-					>
-						{usersLoading ? (
-							<Progress
-								sx={{
-									margin: "40px auto",
-								}}
-							/>
-						) : (
-							(showAllUsers ? users : users.slice(0, 7)).map(
-								(user) => (
-									<UserCard key={user._id} user={user} />
-								)
-							)
-						)}
-					</Box>
-				</Grid2>
+				<UsersSection
+					users={users}
+					usersLoading={usersLoading}
+					showAllUsers={showAllUsers}
+					setShowAllUsers={setShowAllUsers}
+				/>
 			</Grid2>
 		</Container>
+	);
+};
+
+const CoursesSection = ({
+	courses,
+	coursesLoading,
+	showAllCourses,
+	setShowAllCourses,
+}) => {
+	return (
+		<Grid2
+			size={{ xs: 12, sm: 6 }}
+			sx={{ display: "flex", flexDirection: "column" }}
+		>
+			<Box
+				sx={{
+					display: "flex",
+					justifyContent: "space-between",
+				}}
+			>
+				<Typography component="h2" variant="h5" sx={{ flexGrow: 1 }}>
+					Courses
+				</Typography>
+				<IconButton sx={{ mr: 2 }}>
+					<AddIcon />
+				</IconButton>
+				<Button
+					variant="contained"
+					color="primary"
+					onClick={() => setShowAllCourses(!showAllCourses)}
+				>
+					{showAllCourses ? "Show Less" : "View All"}
+				</Button>
+			</Box>
+
+			<Box
+				sx={{
+					flexGrow: 1,
+					display: "flex",
+					flexDirection: "column",
+				}}
+			>
+				{coursesLoading ? (
+					<Progress
+						sx={{
+							margin: "40px auto",
+						}}
+					/>
+				) : (
+					(showAllCourses ? courses : courses.slice(0, 4)).map(
+						(course) => (
+							<CourseCard key={course._id} course={course} />
+						)
+					)
+				)}
+			</Box>
+		</Grid2>
+	);
+};
+
+const UsersSection = ({
+	users,
+	usersLoading,
+	showAllUsers,
+	setShowAllUsers,
+}) => {
+	return (
+		<Grid2
+			size={{ xs: 12, sm: 6 }}
+			sx={{
+				display: "flex",
+				flexDirection: "column",
+				justifyContent: "space-between",
+			}}
+		>
+			<Box
+				sx={{
+					display: "flex",
+					justifyContent: "space-between",
+				}}
+			>
+				<Typography component="h2" variant="h5" sx={{ flexGrow: 1 }}>
+					Users
+				</Typography>
+				<IconButton sx={{ mr: 2 }}>
+					<AddIcon />
+				</IconButton>
+				<Button
+					variant="contained"
+					color="primary"
+					onClick={() => setShowAllUsers(!showAllUsers)}
+				>
+					{showAllUsers ? "Show Less" : "View All"}
+				</Button>
+			</Box>
+
+			<Box
+				sx={{
+					flexGrow: 1,
+					display: "flex",
+					flexDirection: "column",
+				}}
+			>
+				{usersLoading ? (
+					<Progress
+						sx={{
+							margin: "40px auto",
+						}}
+					/>
+				) : (
+					(showAllUsers ? users : users.slice(0, 7)).map((user) => (
+						<UserCard key={user._id} user={user} />
+					))
+				)}
+			</Box>
+		</Grid2>
 	);
 };
 
