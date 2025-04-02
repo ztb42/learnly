@@ -1,10 +1,43 @@
-import { Avatar } from "@mui/material";
+import { useState } from "react";
+import {
+	Avatar,
+	Drawer,
+	IconButton,
+	List,
+	ListItem,
+	ListItemButton,
+	ListItemText,
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 import { NavLink } from "react-router-dom";
 
 const Navbar = () => {
+	const [mobileOpen, setMobileOpen] = useState(false);
+
+	const toggleDrawer = (open) => (event) => {
+		if (
+			event.type === "keydown" &&
+			(event.key === "Tab" || event.key === "Shift")
+		) {
+			return;
+		}
+		setMobileOpen(open);
+	};
+
+	const navItems = [
+		{ path: "/", label: "Dashboard" },
+		{ path: "/training-programs", label: "Programs" },
+		{ path: "/users", label: "Users" },
+		{ path: "/login", label: "Login" },
+		{ path: "/forgot-password", label: "Forgot Password" },
+		{ path: "/users/new", label: "User Creation" },
+		{ path: "/training-programs/new", label: "Training Creation" },
+		{ path: "/logout", label: "Log Out" },
+	];
+
 	return (
-		<nav className="navbar navbar-expand-lg">
-			<div className="container-fluid ps-0">
+		<nav className="navbar">
+			<div className="container-fluid ps-0 d-flex align-items-center">
 				<div className="logo-container">
 					<NavLink to="/" className="logo">
 						<img
@@ -16,47 +49,66 @@ const Navbar = () => {
 					</NavLink>
 				</div>
 
-				<button
-					className="navbar-toggler"
-					type="button"
-					data-bs-toggle="collapse"
-					data-bs-target="#navbarNav"
-					aria-controls="navbarNav"
-					aria-expanded="false"
-					aria-label="Toggle navigation"
+				{/* Mobile Menu Button */}
+				<IconButton
+					edge="end"
+					color="inherit"
+					aria-label="menu"
+					onClick={toggleDrawer(true)}
+					className="d-lg-none"
 				>
-					<span className="navbar-toggler-icon"></span>
-				</button>
-				<div className="collapse navbar-collapse" id="navbarNav">
-					<NavLink to="/" className="nav-link">
-						Dashboard
-					</NavLink>
-					<NavLink to="/training-programs" className="nav-link">
-						Programs
-					</NavLink>
-					<NavLink to="/users" className="nav-link me-auto">
-						Users
-					</NavLink>
-					<NavLink to="/login" className="nav-link">
-						Login
-					</NavLink>
-					<NavLink to="/forgot-password" className="nav-link">
-						ForgotPassword
-					</NavLink>
-					<NavLink to="/users/new" className="nav-link">
-						UserCreation
-					</NavLink>
-					<NavLink to="/training-programs/new" className="nav-link">
-						TrainingCreation
-					</NavLink>
-					<NavLink to="/logout" className="nav-link">
-						Log Out
-					</NavLink>
+					<MenuIcon />
+				</IconButton>
+
+				{/* Desktop Navigation */}
+				<div className="d-none d-lg-flex align-items-center flex-grow-1">
+					{navItems.map((item, index) => (
+						<NavLink
+							key={item.path}
+							to={item.path}
+							className={`nav-link ${
+								index === 2 ? "me-auto" : ""
+							}`}
+						>
+							{item.label}
+						</NavLink>
+					))}
 					<NavLink to="/profile" className="nav-link logo mx-3">
 						<Avatar />
 					</NavLink>
 				</div>
 			</div>
+
+			{/* Mobile Drawer */}
+			<Drawer
+				anchor="right"
+				open={mobileOpen}
+				onClose={toggleDrawer(false)}
+			>
+				<List>
+					{navItems.map((item) => (
+						<ListItem key={item.path} disablePadding>
+							<ListItemButton
+								component={NavLink}
+								to={item.path}
+								onClick={toggleDrawer(false)}
+							>
+								<ListItemText primary={item.label} />
+							</ListItemButton>
+						</ListItem>
+					))}
+					<ListItem disablePadding>
+						<ListItemButton
+							component={NavLink}
+							to="/profile"
+							onClick={toggleDrawer(false)}
+						>
+							<Avatar size="sm" className="me-2" />
+							<ListItemText primary="Profile" />
+						</ListItemButton>
+					</ListItem>
+				</List>
+			</Drawer>
 		</nav>
 	);
 };
