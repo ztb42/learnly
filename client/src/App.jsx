@@ -11,11 +11,13 @@ import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import CreateUser from "./pages/CreateUser";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PasswordReset from "./pages/PasswordReset";
 
 function App() {
 	const router = createBrowserRouter([
 		{ path: "login", element: <Login /> },
 		{ path: "forgot-password", element: <ForgotPassword /> },
+		{ path: "reset-password", element: <PasswordReset /> },
 		{
 			path: "/",
 			element: <Layout />,

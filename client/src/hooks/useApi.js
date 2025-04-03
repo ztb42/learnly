@@ -3,13 +3,15 @@ import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:5050";
 
-const useApi = (endpoint) => {
+const useApi = (endpoint, fetchOnMount = true) => {
 	const [data, setData] = useState([]);
-	const [loading, setLoading] = useState(true);
+	const [loading, setLoading] = useState(fetchOnMount); // Only set loading if fetchOnMount is true
 	const [error, setError] = useState(null);
 
 	// Fetch data (GET request)
 	useEffect(() => {
+		if (!fetchOnMount) return; // Skip the GET request if fetchOnMount is false
+
 		const fetchData = async () => {
 			setLoading(true);
 			setError(null);
@@ -25,10 +27,10 @@ const useApi = (endpoint) => {
 		};
 
 		fetchData();
-	}, [endpoint]);
+	}, [endpoint, fetchOnMount]);
 
 	// Function to create (add) an item
-	const createItem = async (newData) => {
+	const postItem = async (newData) => {
 		try {
 			const response = await axios.post(
 				`${BASE_URL}${endpoint}`,
@@ -38,6 +40,7 @@ const useApi = (endpoint) => {
 			setData((prevData) => [...prevData, response.data]);
 		} catch (err) {
 			setError(err.response?.data?.message || err.message);
+			throw err.response?.data?.message || err.message; // Re-throw error for the caller to handle
 		}
 	};
 
@@ -68,7 +71,7 @@ const useApi = (endpoint) => {
 		}
 	};
 
-	return { data, loading, error, createItem, deleteItem, editItem };
+	return { data, loading, error, postItem, deleteItem, editItem };
 };
 
 export default useApi;

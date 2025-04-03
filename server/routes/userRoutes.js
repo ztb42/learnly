@@ -68,7 +68,6 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
 	try {
 		const { username, password } = req.body;
-		console.log("🔐 Login attempt:", username);//remove and move below up one row
 		const user = await User.findOne({ username }).populate("role");
 
 		if (!user) return res.status(404).json({ message: "User not found" });
@@ -94,15 +93,22 @@ router.post("/login", async (req, res) => {
 router.post("/reset-password", async (req, res) => {
 	try {
 		const { email } = req.body;
+
+		// Check if user exists
 		const user = await User.findOne({ email });
 		if (!user) return res.status(404).json({ message: "User not found" });
 
-		const tempPassword = Math.random().toString(36).slice(-8);
-		const hashedPassword = await bcrypt.hash(tempPassword, 10);
+		// Generate a reset token
+		const resetToken = jwt.sign(
+			{ userId: user._id },
+			process.env.JWT_SECRET,
+			{ expiresIn: "15m" } // Token expires in 15 minutes
+		);
 
-		user.password = hashedPassword;
-		await user.save();
+		// Create a reset link
+		const resetLink = `${process.env.CLIENT_URL}/reset-password?token=${resetToken}`;
 
+		// Send the reset link via email
 		const transporter = nodemailer.createTransport({
 			service: "gmail",
 			auth: {
@@ -115,16 +121,40 @@ router.post("/reset-password", async (req, res) => {
 			from: `Learnly <${process.env.EMAIL_USER}>`,
 			to: email,
 			subject: "Learnly Password Reset",
-			text: `Here is your temporary password: ${tempPassword}\nPlease log in and change it immediately.`,
+			text: `Click the link below to reset your password:\n\n${resetLink}\n\nThis link will expire in 15 minutes.`,
 		};
 
 		await transporter.sendMail(mailOptions);
 
-		res.json({ message: "Temporary password sent to your email." });
+		res.json({ message: "Password reset link sent to your email." });
 	} catch (error) {
 		console.error("🔴 Password reset failed:", error.message);
 		res.status(500).json({
 			message: "Server error during reset",
+			error: error.message,
+		});
+	}
+});
+
+// Verify token and reset password
+router.post("/reset-password/confirm", async (req, res) => {
+	try {
+		const { token, newPassword } = req.body;
+
+		// Verify the token
+		const decoded = jwt.verify(token, process.env.JWT_SECRET);
+		const user = await User.findById(decoded.userId);
+		if (!user) return res.status(404).json({ message: "User not found" });
+
+		// Update the password
+		user.password = await bcrypt.hash(newPassword, 10);
+		await user.save();
+
+		res.json({ message: "Password reset successfully." });
+	} catch (error) {
+		console.error("🔴 Password reset confirmation failed:", error.message);
+		res.status(500).json({
+			message: "Invalid or expired token",
 			error: error.message,
 		});
 	}
