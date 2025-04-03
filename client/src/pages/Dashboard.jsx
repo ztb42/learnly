@@ -15,16 +15,17 @@ import TrainingCard from "../components/dashboard/TrainingCard";
 import UserCard from "../components/dashboard/UserCard";
 import Progress from "../components/Progress";
 import { Link } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
 
 const Dashboard = () => {
 	const { data: trainings, loading: trainingsLoading } = useApi(
 		"/api/training-programs"
 	);
 	const { data: users, loading: usersLoading } = useApi("/api/users");
+	const { user } = useAuth();
 
-	const currentUserRole = "Admin"; // TODO: Replace with actual user role from context or state
-
-	console.log(users);
+	// Safely access the role name
+	const currentUserRole = user?.role?.roleName || "Guest";
 
 	return (
 		<Container

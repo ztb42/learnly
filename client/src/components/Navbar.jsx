@@ -10,9 +10,12 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { NavLink } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+import ColoredAvatar from "./ColoredAvatar";
 
 const Navbar = () => {
 	const [mobileOpen, setMobileOpen] = useState(false);
+	const { user, logout } = useAuth();
 
 	const toggleDrawer = (open) => (event) => {
 		if (
@@ -32,7 +35,6 @@ const Navbar = () => {
 		{ path: "/forgot-password", label: "Forgot Password" },
 		{ path: "/users/new", label: "User Creation" },
 		{ path: "/training-programs/new", label: "Training Creation" },
-		{ path: "/logout", label: "Log Out" },
 	];
 
 	return (
@@ -73,9 +75,16 @@ const Navbar = () => {
 							{item.label}
 						</NavLink>
 					))}
-					<NavLink to="/profile" className="nav-link logo mx-3">
-						<Avatar />
+					<NavLink to="#" className="nav-link" onClick={logout}>
+						Log Out
 					</NavLink>
+					<div className="nav-link logo mx-3">
+						<ColoredAvatar
+							name={
+								user ? `${user.firstName} ${user.lastName}` : ""
+							}
+						/>
+					</div>
 				</div>
 			</div>
 
@@ -100,11 +109,13 @@ const Navbar = () => {
 					<ListItem disablePadding>
 						<ListItemButton
 							component={NavLink}
-							to="/profile"
-							onClick={toggleDrawer(false)}
+							to="#"
+							onClick={() => {
+								logout();
+								toggleDrawer(false);
+							}}
 						>
-							<Avatar size="sm" className="me-2" />
-							<ListItemText primary="Profile" />
+							<ListItemText primary="Log Out" />
 						</ListItemButton>
 					</ListItem>
 				</List>

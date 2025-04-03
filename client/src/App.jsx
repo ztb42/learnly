@@ -1,4 +1,6 @@
 import { createBrowserRouter, RouterProvider } from "react-router";
+import { AuthProvider } from "./contexts/AuthContext";
+import { SnackbarProvider } from "notistack";
 import Layout from "./pages/Layout";
 import Dashboard from "./pages/Dashboard";
 import UserManagement from "./pages/UserManagement";
@@ -8,59 +10,67 @@ import ErrorPage from "./pages/Error";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
 import CreateUser from "./pages/CreateUser";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
 	const router = createBrowserRouter([
+		{ path: "login", element: <Login /> },
+		{ path: "forgot-password", element: <ForgotPassword /> },
 		{
 			path: "/",
 			element: <Layout />,
 			errorElement: <ErrorPage />,
 			children: [
+				// Public Routes
+
+				// Protected Routes (All children require authentication)
 				{
-					index: true,
-					element: <Dashboard />,
-				},
-				{
-					path: "users",
+					element: <ProtectedRoute allowedRoles={["admin"]} />,
 					children: [
+						{ index: true, element: <Dashboard /> },
 						{
-							index: true,
-							element: <UserManagement />,
+							path: "training-programs",
+							children: [
+								{ index: true, element: <TrainingPrograms /> },
+								{
+									path: "new",
+									element: (
+										<ProtectedRoute
+											allowedRoles={["admin"]}
+										/>
+									),
+									children: [
+										{
+											index: true,
+											element: <CreateTraining />,
+										},
+									],
+								},
+							],
 						},
 						{
-							path: "new",
-							element: <CreateUser />,
+							path: "users",
+							element: (
+								<ProtectedRoute allowedRoles={["admin"]} />
+							),
+							children: [
+								{ index: true, element: <UserManagement /> },
+								{ path: "new", element: <CreateUser /> },
+							],
 						},
-						// {
-						// 	path: ":userId",
-						// }
 					],
 				},
-				{
-					path: "training-programs",
-					children: [
-						{
-							index: true,
-							element: <TrainingPrograms />,
-						},
-						{
-							path: "new",
-							element: <CreateTraining />,
-						},
-					],
-				},
-				{ path: "login", element: <Login /> },
-				{ path: "forgot-password", element: <ForgotPassword /> },
-				// Example of adding a new route
-				// {
-				//   path: 'login',
-				//   element: <Login />
-				// }
 			],
 		},
 	]);
 
-	return <RouterProvider router={router} />;
+	return (
+		<SnackbarProvider maxSnack={3} autoHideDuration={3000}>
+			<AuthProvider>
+				<RouterProvider router={router} />
+			</AuthProvider>
+		</SnackbarProvider>
+	);
 }
 
 export default App;

@@ -26,7 +26,7 @@ const ColoredAvatar = ({ name }) => {
 				color: "white", // Ensure text is readable
 			}}
 		>
-			{initials}
+			{initials.toUpperCase()}
 		</Avatar>
 	);
 };

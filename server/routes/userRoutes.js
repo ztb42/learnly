@@ -9,55 +9,27 @@ import nodemailer from "nodemailer";
 dotenv.config();
 const router = express.Router();
 
-// // Register a new user
-// router.post("/register", async (req, res) => {
-// 	//andrew added
-// 	console.log("📨 Received register request"); // <--- ADD THIS
-// 	//end andrew added
-
-// 	try {
-// 		const { firstName, lastName, username, email, password, role } = req.body;
-
-// 		console.log("📥 Role sent from frontend:", role);
-// 		const foundRole = await Role.findOne({ roleName: role.trim() });
-
-// 		if (!foundRole) {
-// 			console.error("❌ Role not found in DB:", role.trim());
-// 			const allRoles = await Role.find();
-// 			console.log("📋 Available roles:", allRoles.map(r => r.roleName));
-// 			return res.status(400).json({ message: `Invalid role: ${role}` });
-// 		}
-
-// 		const hashedPassword = await bcrypt.hash(password, 10);
-
-// 		const newUser = new User({
-// 			firstName,
-// 			lastName,
-// 			username,
-// 			email,
-// 			password: hashedPassword,
-// 			role: foundRole._id,
-// 		});
-
-// 		await newUser.save();
-// 		res.status(201).json({ message: "User registered successfully!" });
-// 	} catch (error) {
-// 		console.error("🔴 Registration error:", error);
-// 		res.status(500).json({ message: "Server error", error: error.message });
-// 	}
-// });
-
 router.post("/register", async (req, res) => {
 	console.log("📨 Received register request");
 
 	try {
-		const { firstName, lastName, username, email, password, role } = req.body;
+		const { firstName, lastName, username, email, password, role } =
+			req.body;
 
 		// 🔍 Check if user already exists
-		const existingUser = await User.findOne({ email });
-		if (existingUser) {
+		const existingEmail = await User.findOne({ email });
+		const existingUsername = await User.findOne({ username });
+		if (existingEmail) {
 			console.warn("⚠️ User already exists with email:", email);
-			return res.status(409).json({ message: "A user with that email already exists." });
+			return res
+				.status(409)
+				.json({ message: "A user with that email already exists." });
+		}
+		if (existingUsername) {
+			console.warn("⚠️ User already exists with username:", username);
+			return res
+				.status(409)
+				.json({ message: "A user with that username already exists." });
 		}
 
 		console.log("📥 Role sent from frontend:", role);
@@ -66,7 +38,10 @@ router.post("/register", async (req, res) => {
 		if (!foundRole) {
 			console.error("❌ Role not found in DB:", role.trim());
 			const allRoles = await Role.find();
-			console.log("📋 Available roles:", allRoles.map(r => r.roleName));
+			console.log(
+				"📋 Available roles:",
+				allRoles.map((r) => r.roleName)
+			);
 			return res.status(400).json({ message: `Invalid role: ${role}` });
 		}
 
@@ -89,24 +64,17 @@ router.post("/register", async (req, res) => {
 	}
 });
 
-
-
-
 // Login a user
 router.post("/login", async (req, res) => {
 	try {
-		const { email, password } = req.body;
-		const user = await User.findOne({ email }).populate("role");
+		const { username, password } = req.body;
+		const user = await User.findOne({ username }).populate("role");
 
 		if (!user) return res.status(404).json({ message: "User not found" });
 
 		const isMatch = await bcrypt.compare(password, user.password);
-		if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
-
-		//ANDREW ADDED
-		console.log("🧪 JWT_SECRET:", process.env.JWT_SECRET);
-		//END ANDREW ADDED
-
+		if (!isMatch)
+			return res.status(400).json({ message: "Invalid credentials" });
 
 		const token = jwt.sign(
 			{ userId: user._id, role: user.role },
@@ -154,7 +122,10 @@ router.post("/reset-password", async (req, res) => {
 		res.json({ message: "Temporary password sent to your email." });
 	} catch (error) {
 		console.error("🔴 Password reset failed:", error.message);
-		res.status(500).json({ message: "Server error during reset", error: error.message });
+		res.status(500).json({
+			message: "Server error during reset",
+			error: error.message,
+		});
 	}
 });
 
@@ -182,7 +153,8 @@ router.get("/:id", async (req, res) => {
 // Update user
 router.put("/:id", async (req, res) => {
 	try {
-		const { firstName, lastName, username, email, password, role } = req.body;
+		const { firstName, lastName, username, email, password, role } =
+			req.body;
 		const user = await User.findById(req.params.id);
 		if (!user) return res.status(404).json({ message: "User not found" });
 
@@ -216,127 +188,3 @@ router.delete("/:id", async (req, res) => {
 });
 
 export default router;
-
-
-// import express from "express";
-// import User from "../models/User.js";
-// import bcrypt from "bcrypt";
-// import jwt from "jsonwebtoken";
-// import dotenv from "dotenv";
-
-// dotenv.config();
-
-// const router = express.Router();
-
-// // Register a new user
-// router.post("/register", async (req, res) => {
-// 	try {
-// 		const { firstName, lastName, username, email, password, role } =
-// 			req.body;
-
-// 		// Hash the password before saving
-// 		const hashedPassword = await bcrypt.hash(password, 10);
-
-// 		const newUser = new User({
-// 			firstName,
-// 			lastName,
-// 			username,
-// 			email,
-// 			password: hashedPassword,
-// 			role,
-// 		});
-
-// 		await newUser.save();
-// 		res.status(201).json({ message: "User registered successfully!" });
-// 	} catch (error) {
-// 		res.status(500).json({ error: error.message });
-// 	}
-// });
-
-// // Login a user
-// router.post("/login", async (req, res) => {
-// 	try {
-// 		const { email, password } = req.body;
-// 		const user = await User.findOne({ email }).populate("role");
-
-// 		if (!user) return res.status(404).json({ message: "User not found" });
-
-// 		const isMatch = await bcrypt.compare(password, user.password);
-// 		if (!isMatch)
-// 			return res.status(400).json({ message: "Invalid credentials" });
-
-// 		const token = jwt.sign(
-// 			{ userId: user._id, role: user.role },
-// 			process.env.JWT_SECRET,
-// 			{ expiresIn: "1h" }
-// 		);
-
-// 		res.json({ token, user });
-// 	} catch (error) {
-// 		res.status(500).json({ error: error.message });
-// 	}
-// });
-
-// // Get all users
-// router.get("/", async (req, res) => {
-// 	try {
-// 		const users = await User.find().populate("role");
-// 		res.json(users);
-// 	} catch (error) {
-// 		res.status(500).json({ error: error.message });
-// 	}
-// });
-
-// // Get a user by ID
-// router.get("/:id", async (req, res) => {
-// 	try {
-// 		const user = await User.findById(req.params.id).populate("role");
-// 		if (!user) return res.status(404).json({ message: "User not found" });
-// 		res.json(user);
-// 	} catch (error) {
-// 		res.status(500).json({ error: error.message });
-// 	}
-// });
-
-// // Update a user by ID
-// router.put("/:id", async (req, res) => {
-// 	try {
-// 		const { firstName, lastName, username, email, password, role } =
-// 			req.body;
-
-// 		// Find user by ID
-// 		const user = await User.findById(req.params.id);
-// 		if (!user) return res.status(404).json({ message: "User not found" });
-
-// 		// Update user fields if provided
-// 		if (firstName) user.firstName = firstName;
-// 		if (lastName) user.lastName = lastName;
-// 		if (username) user.username = username;
-// 		if (email) user.email = email;
-// 		if (role) user.role = role;
-
-// 		// Hash new password if it's provided
-// 		if (password) {
-// 			user.password = await bcrypt.hash(password, 10);
-// 		}
-
-// 		await user.save();
-// 		res.json({ message: "User updated successfully", user });
-// 	} catch (error) {
-// 		res.status(500).json({ error: error.message });
-// 	}
-// });
-
-// // Delete a user by ID
-// router.delete("/:id", async (req, res) => {
-// 	try {
-// 		const user = await User.findById(req.params.id);
-// 		if (!user) return res.status(404).json({ message: "User not found" });
-// 		await user.remove();
-// 		res.json({ message: "User deleted successfully" });
-// 	} catch (error) {
-// 		res.status(500).json({ error: error.message });
-// 	}
-// });
-
-// export default router;
