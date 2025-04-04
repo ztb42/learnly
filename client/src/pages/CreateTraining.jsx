@@ -1,206 +1,198 @@
+import React, { useEffect, useState } from "react";
 import {
 	Box,
 	Button,
-	Container,
-	MenuItem,
-	Select,
 	TextField,
 	Typography,
-	Chip,
-	InputLabel,
+	Container,
+	MenuItem,
 	FormControl,
+	InputLabel,
+	Select,
 } from "@mui/material";
-import { useState } from "react";
-
-const trainingOptions = ["Website", "Cyber Security", "Marketing"];
-const tagOptions = [
-	{ label: "UI Design", color: "primary" },
-	{ label: "Website", color: "secondary" },
-	{ label: "Designer", color: "success" },
-	{ label: "Marketing", color: "warning" },
-	{ label: "Social Media", color: "info" },
-];
-
-const mockManagers = ["Alice", "Diana"];
-const mockTrainers = ["Bob", "Ethan"];
+import { useNavigate } from "react-router-dom";
+import useApi from "../hooks/useApi";
 
 const CreateTraining = () => {
-	const [formData, setFormData] = useState({
+	const navigate = useNavigate();
+	const { data: users = [] } = useApi("/api/users");
+
+	const [form, setForm] = useState({
 		title: "",
-		date: "",
+		description: "",
+		duration: "",
+		deadline: "",
 		startTime: "",
 		endTime: "",
-		description: "",
-		training: "",
-		tags: [],
 		manager: "",
 		trainer: "",
 	});
 
+	const [errors, setErrors] = useState({});
+
 	const handleChange = (e) => {
 		const { name, value } = e.target;
-		setFormData({ ...formData, [name]: value });
+		setForm((prevForm) => ({ ...prevForm, [name]: value }));
+		setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
 	};
 
-	const handleTagClick = (tag) => {
-		setFormData((prev) => {
-			const tags = prev.tags.includes(tag)
-				? prev.tags.filter((t) => t !== tag)
-				: [...prev.tags, tag];
-			return { ...prev, tags };
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+
+		const newErrors = {};
+		Object.keys(form).forEach((key) => {
+			if (!form[key]) {
+				newErrors[key] = `${key.charAt(0).toUpperCase() + key.slice(1)} is required.`;
+			}
 		});
-	};
 
-	const handleSubmit = async () => {
+		if (Object.keys(newErrors).length > 0) {
+			setErrors(newErrors);
+			return;
+		}
+
 		try {
-			const res = await fetch("http://localhost:5000/trainings", {
+			const res = await fetch("http://localhost:5050/api/training-programs", {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify(formData),
+				body: JSON.stringify({
+					...form,
+					duration: parseInt(form.duration),
+					manager: form.manager || null,
+					trainer: form.trainer || null,
+				}),
 			});
-			const result = await res.json();
-			console.log("Success:", result);
-			alert("Training created!");
+
+			const data = await res.json();
+
+			if (!res.ok) {
+				alert(data.message || "Failed to create training");
+			} else {
+				alert("Training created successfully!");
+				navigate("/training-programs");
+			}
 		} catch (err) {
-			console.error("Error:", err);
-			alert("Something went wrong.");
+			console.error("🔥 Error creating training:", err);
+			alert("Server error: " + err.message);
 		}
+
+		setForm({
+			title: "",
+			description: "",
+			duration: "",
+			deadline: "",
+			startTime: "",
+			endTime: "",
+			manager: "",
+			trainer: "",
+		});
+		setErrors({});
 	};
 
+	const managers = users.filter((u) => u.role?.roleName === "Manager");
+	const trainers = users.filter((u) => u.role?.roleName === "Trainer");
+
 	return (
-		<Container
-			maxWidth="sm"
-			sx={{
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-				textAlign: "center",
-				padding: 2,
-				marginTop: "3rem",
-			}}
-		>
-			<Typography variant="h4" gutterBottom>
+		<Container maxWidth="sm" sx={{ mt: 4 }}>
+			<Typography variant="h4" mb={3}>
 				Create Training
 			</Typography>
-
-			<TextField
-				fullWidth
-				label="Title"
-				name="title"
-				value={formData.title}
-				onChange={handleChange}
-				margin="normal"
-			/>
-			<TextField
-				fullWidth
-				type="date"
-				name="date"
-				value={formData.date}
-				onChange={handleChange}
-				margin="normal"
-			/>
-			<TextField
-				fullWidth
-				type="time"
-				name="startTime"
-				value={formData.startTime}
-				onChange={handleChange}
-				margin="normal"
-				label="Start Time"
-			/>
-			<TextField
-				fullWidth
-				type="time"
-				name="endTime"
-				value={formData.endTime}
-				onChange={handleChange}
-				margin="normal"
-				label="End Time"
-			/>
-			<TextField
-				fullWidth
-				label="Description"
-				name="description"
-				value={formData.description}
-				onChange={handleChange}
-				multiline
-				rows={4}
-				margin="normal"
-			/>
-
-			<FormControl fullWidth margin="normal">
-				<InputLabel>Training</InputLabel>
-				<Select
-					name="training"
-					value={formData.training}
+			<Box component="form" onSubmit={handleSubmit} sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+				<TextField
+					label="Title"
+					name="title"
+					fullWidth
+					value={form.title}
 					onChange={handleChange}
-				>
-					{trainingOptions.map((training) => (
-						<MenuItem key={training} value={training}>
-							{training}
-						</MenuItem>
-					))}
-				</Select>
-			</FormControl>
-
-			<Box mt={2}>
-				<Typography variant="subtitle1" gutterBottom>
-					Tags:
-				</Typography>
-				{tagOptions.map((tag) => (
-					<Chip
-						key={tag.label}
-						label={tag.label}
-						color={tag.color}
-						variant={
-							formData.tags.includes(tag.label)
-								? "filled"
-								: "outlined"
-						}
-						onClick={() => handleTagClick(tag.label)}
-						sx={{ mr: 1, mb: 1 }}
-					/>
-				))}
+					error={!!errors.title}
+					helperText={errors.title}
+				/>
+				<TextField
+					label="Description"
+					name="description"
+					fullWidth
+					multiline
+					rows={4}
+					value={form.description}
+					onChange={handleChange}
+					error={!!errors.description}
+					helperText={errors.description}
+				/>
+				<TextField
+					label="Duration (weeks)"
+					type="number"
+					name="duration"
+					fullWidth
+					value={form.duration}
+					onChange={handleChange}
+					error={!!errors.duration}
+					helperText={errors.duration}
+				/>
+				<TextField
+					label="Deadline"
+					type="date"
+					name="deadline"
+					fullWidth
+					InputLabelProps={{ shrink: true }}
+					value={form.deadline}
+					onChange={handleChange}
+					error={!!errors.deadline}
+					helperText={errors.deadline}
+				/>
+				<TextField
+					label="Start Time"
+					type="time"
+					name="startTime"
+					fullWidth
+					InputLabelProps={{ shrink: true }}
+					value={form.startTime}
+					onChange={handleChange}
+				/>
+				<TextField
+					label="End Time"
+					type="time"
+					name="endTime"
+					fullWidth
+					InputLabelProps={{ shrink: true }}
+					value={form.endTime}
+					onChange={handleChange}
+				/>
+				<FormControl fullWidth>
+					<InputLabel id="manager-label">Assign Manager</InputLabel>
+					<Select
+						labelId="manager-label"
+						name="manager"
+						value={form.manager}
+						onChange={handleChange}
+					>
+						<MenuItem value=""><em>Unassigned</em></MenuItem>
+						{managers.map((m) => (
+							<MenuItem key={m._id} value={m._id}>
+								{m.firstName} {m.lastName}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+				<FormControl fullWidth>
+					<InputLabel id="trainer-label">Assign Trainer</InputLabel>
+					<Select
+						labelId="trainer-label"
+						name="trainer"
+						value={form.trainer}
+						onChange={handleChange}
+					>
+						<MenuItem value=""><em>Unassigned</em></MenuItem>
+						{trainers.map((t) => (
+							<MenuItem key={t._id} value={t._id}>
+								{t.firstName} {t.lastName}
+							</MenuItem>
+						))}
+					</Select>
+				</FormControl>
+				<Button type="submit" variant="contained" color="primary">
+					Submit
+				</Button>
 			</Box>
-
-			<FormControl fullWidth margin="normal">
-				<InputLabel>Assign Manager</InputLabel>
-				<Select
-					name="manager"
-					value={formData.manager}
-					onChange={handleChange}
-				>
-					{mockManagers.map((m) => (
-						<MenuItem key={m} value={m}>
-							{m}
-						</MenuItem>
-					))}
-				</Select>
-			</FormControl>
-
-			<FormControl fullWidth margin="normal">
-				<InputLabel>Assign Trainer</InputLabel>
-				<Select
-					name="trainer"
-					value={formData.trainer}
-					onChange={handleChange}
-				>
-					{mockTrainers.map((t) => (
-						<MenuItem key={t} value={t}>
-							{t}
-						</MenuItem>
-					))}
-				</Select>
-			</FormControl>
-
-			<Button
-				variant="contained"
-				fullWidth
-				sx={{ mt: 3 }}
-				onClick={handleSubmit}
-			>
-				Create Training
-			</Button>
 		</Container>
 	);
 };
