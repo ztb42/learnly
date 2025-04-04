@@ -211,11 +211,15 @@ router.delete("/:id", async (req, res) => {
 	try {
 		const user = await User.findById(req.params.id);
 		if (!user) return res.status(404).json({ message: "User not found" });
-		await user.remove();
+
+		await User.findByIdAndDelete(req.params.id);
+
 		res.json({ message: "User deleted successfully" });
 	} catch (error) {
+		console.error("❌ Error deleting user:", error.message);
 		res.status(500).json({ error: error.message });
 	}
 });
+
 
 export default router;
