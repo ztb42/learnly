@@ -1,109 +1,66 @@
-import { createBrowserRouter, RouterProvider } from "react-router";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { SnackbarProvider } from "notistack";
+
+// Pages
 import Layout from "./pages/Layout";
 import Dashboard from "./pages/Dashboard";
 import UserManagement from "./pages/UserManagement";
+import CreateUser from "./pages/CreateUser";
+import EditUser from "./pages/EditUser";
 import CreateTraining from "./pages/CreateTraining";
 import TrainingPrograms from "./pages/TrainingPrograms";
-import ErrorPage from "./pages/Error";
 import Login from "./pages/Login";
 import ForgotPassword from "./pages/ForgotPassword";
-import CreateUser from "./pages/CreateUser";
-import ProtectedRoute from "./components/ProtectedRoute";
 import PasswordReset from "./pages/PasswordReset";
-import EditUser from "./pages/EditUser";
+import ErrorPage from "./pages/Error";
+import EditTraining from "./pages/EditTraining";
 
+
+// Components
+import ProtectedRoute from "./components/ProtectedRoute";
 
 function App() {
 	const router = createBrowserRouter([
 		{ path: "login", element: <Login /> },
 		{ path: "forgot-password", element: <ForgotPassword /> },
 		{ path: "reset-password", element: <PasswordReset /> },
-		// {
-		// 	path: "/",
-		// 	element: <Layout />,
-		// 	errorElement: <ErrorPage />,
-		// 	children: [
-		// 		// Public Routes
 
-		// 		// Protected Routes (All children require authentication)
-		// 		{
-		// 			element: <ProtectedRoute allowedRoles={["admin"]} />,
-		// 			children: [
-		// 				{ index: true, element: <Dashboard /> },
-		// 				{
-		// 					path: "training-programs",
-		// 					children: [
-		// 						{ index: true, element: <TrainingPrograms /> },
-		// 						{
-		// 							path: "new",
-		// 							element: (
-		// 								<ProtectedRoute
-		// 									allowedRoles={["admin"]}
-		// 								/>
-		// 							),
-		// 							children: [
-		// 								{
-		// 									index: true,
-		// 									element: <CreateTraining />,
-		// 								},
-		// 							],
-		// 						},
-		// 					],
-		// 				},
-		// 				{
-		// 					path: "users",
-		// 					element: (
-		// 						<ProtectedRoute allowedRoles={["admin"]} />
-		// 					),
-		// 					children: [
-		// 						{ index: true, element: <UserManagement /> },
-		// 						{ path: "new", element: <CreateUser /> },
-		// 						{ path: ":id/edit", element: <EditUser /> },
-		// 					],
-		// 				},
-		// 			],
-		// 		},
-		// 	],
-		// },
 		{
 			path: "/",
 			element: <Layout />,
 			errorElement: <ErrorPage />,
 			children: [
-				// Public Routes
-				{ path: "login", element: <Login /> },
-				{ path: "forgot-password", element: <ForgotPassword /> },
-				{ path: "reset-password", element: <PasswordReset /> },
-		
-				// Protected Routes
+				// Protected routes
 				{
 					element: <ProtectedRoute allowedRoles={["admin"]} />,
 					children: [
 						{ index: true, element: <Dashboard /> },
-		
+
+						
 						{
 							path: "training-programs",
 							children: [
 								{ index: true, element: <TrainingPrograms /> },
 								{ path: "new", element: <CreateTraining /> },
+								{ path: ":id/edit", element: <EditTraining /> }, 
+	
 							],
 						},
-		
+
+						// ✅ USER routes (updated and working)
 						{
 							path: "users",
 							children: [
-								{ index: true, element: <UserManagement /> },
-								{ path: "new", element: <CreateUser /> },
-								{ path: ":id/edit", element: <EditUser /> },
+								{ index: true, element: <UserManagement /> },    // /users
+								{ path: "new", element: <CreateUser /> },       // /users/new
+								{ path: ":id/edit", element: <EditUser /> },    // /users/:id/edit
 							],
 						},
 					],
 				},
 			],
 		},
-		
 	]);
 
 	return (

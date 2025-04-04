@@ -14,15 +14,19 @@ router.post("/", async (req, res) => {
 	}
 });
 
-// Get all Training Programs
+// // Get all Training Programs
 router.get("/", async (req, res) => {
 	try {
-		const trainings = await TrainingProgram.find().populate("manager");
+		const trainings = await TrainingProgram.find()
+	.populate({ path: "manager", strictPopulate: false })
+	.populate({ path: "trainer", strictPopulate: false });
+// 👈 this is the key fix!
 		res.json(trainings);
 	} catch (error) {
 		res.status(500).json({ error: error.message });
 	}
 });
+
 
 // Get a single Training Program
 router.get("/:id", async (req, res) => {

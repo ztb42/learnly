@@ -9,12 +9,23 @@ import {
 import ClockIcon from "@mui/icons-material/AccessTime";
 
 const TrainingCard = ({ training }) => {
+	const trainerName = training.trainer
+		? `${training.trainer.firstName} ${training.trainer.lastName}`
+		: "Unassigned";
+
 	return (
 		<Card variant="outlined" sx={{ mt: 2 }}>
 			<CardContent>
 				<Typography variant="h6">{training.title}</Typography>
 				<Typography variant="body2" sx={{ color: "darkgray" }}>
 					{training.description}
+				</Typography>
+
+				<Typography
+					variant="body2"
+					sx={{ color: "gray", mt: 1 }}
+				>
+					Trainer: {trainerName}
 				</Typography>
 
 				<Divider sx={{ my: 2, opacity: 1 }} />

@@ -161,7 +161,7 @@ const UsersSection = ({ users, usersLoading }) => {
 				<Typography component="h2" variant="h5" sx={{ flexGrow: 1 }}>
 					Users
 				</Typography>
-				<Link to="/create-user">
+				<Link to="/users/new">
 					<IconButton sx={{ mr: 2 }}>
 						<AddIcon />
 					</IconButton>

@@ -119,7 +119,7 @@ const UserManagement = () => {
 						justifyContent="space-between"
 						alignItems="center"
 					>
-						<Link to="/create-user">
+						<Link to="/users/new">
 							<Button variant="contained" color="primary">
 								Add User
 							</Button>
