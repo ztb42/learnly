@@ -15,7 +15,11 @@ import Progress from "../components/Progress";
 import { Link } from "react-router";
 
 const UserManagement = () => {
-	const { data: users, loading: usersLoading } = useApi("/api/users");
+	const {
+		data: users,
+		loading: usersLoading,
+		refetch,
+	} = useApi("/api/users");
 	const { data: roles, loading: rolesLoading } = useApi("/api/roles");
 
 	const [search, setSearch] = useState("");
@@ -45,12 +49,16 @@ const UserManagement = () => {
 		setPage(1); // Reset to the first page when switching roles
 	};
 
+	const handleUserDelete = () => {
+		refetch(); // Refetch the users after deletion
+	};
+
 	return (
 		<Container
 			className="users-page"
 			maxWidth="md"
 			sx={{
-				marginTop: "2rem",
+				my: "2rem",
 			}}
 		>
 			<Typography variant="h4" gutterBottom>
@@ -67,10 +75,13 @@ const UserManagement = () => {
 			) : (
 				<>
 					{/* Role Tabs */}
-					{roles && (
+					{roles.length > 0 && (
 						<Tabs
-							value={roles.findIndex(
-								(role) => role._id === activeRole
+							value={Math.max(
+								roles.findIndex(
+									(role) => role._id === activeRole
+								),
+								0
 							)}
 							onChange={handleTabChange}
 							indicatorColor="primary"
@@ -101,12 +112,17 @@ const UserManagement = () => {
 							<Progress
 								sx={{
 									margin: "40px auto",
+									display: "block",
 								}}
 							/>
 						) : (
 							<>
 								{filteredUsers.map((user) => (
-									<UserCard key={user._id} user={user} />
+									<UserCard
+										key={user._id}
+										user={user}
+										handleUserDelete={handleUserDelete}
+									/>
 								))}
 							</>
 						)}

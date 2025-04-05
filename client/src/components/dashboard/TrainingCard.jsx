@@ -7,10 +7,14 @@ import {
 	Chip,
 } from "@mui/material";
 import ClockIcon from "@mui/icons-material/AccessTime";
+import useAuth from "../../hooks/useAuth";
 
 const TrainingCard = ({ training }) => {
-	const trainerName = training.trainer
-		? `${training.trainer.firstName} ${training.trainer.lastName}`
+	const { user } = useAuth();
+	const currentUserRole = user?.role?.roleName || "";
+
+	const managerName = training.manager
+		? `${training.manager.firstName} ${training.manager.lastName}`
 		: "Unassigned";
 
 	return (
@@ -21,12 +25,11 @@ const TrainingCard = ({ training }) => {
 					{training.description}
 				</Typography>
 
-				<Typography
-					variant="body2"
-					sx={{ color: "gray", mt: 1 }}
-				>
-					Trainer: {trainerName}
-				</Typography>
+				{["Admin", "Trainer"].includes(currentUserRole) && (
+					<Typography variant="body2" sx={{ color: "gray", mt: 1 }}>
+						Manager: {managerName}
+					</Typography>
+				)}
 
 				<Divider sx={{ my: 2, opacity: 1 }} />
 

@@ -47,7 +47,7 @@ const seedDatabase = async () => {
 			},
 		];
 		for (const role of roleDocs) {
-			for (let i = 0; i < 3; i++) {
+			for (let i = 0; i < 11; i++) {
 				const hashedPassword = await bcrypt.hash("password123", 10);
 				const firstName = faker.person.firstName();
 				const lastName = faker.person.lastName();
@@ -149,13 +149,17 @@ const seedDatabase = async () => {
 		const trainingSessions = [];
 		for (const program of trainingProgramDocs) {
 			for (let i = 0; i < 3; i++) {
+				const hour = String(
+					faker.number.int({ min: 9, max: 17 })
+				).padStart(2, "0");
+				const sessionTime = `${hour}:00`;
 				trainingSessions.push({
 					training: program._id, // Match schema field name
 					trainer:
 						trainers[Math.floor(Math.random() * trainers.length)]
 							._id, // Assign a random trainer
 					sessionDate: faker.date.future(),
-					sessionTime: `${faker.number.int({ min: 9, max: 17 })}:00`, // Random hour between 9AM-5PM
+					sessionTime: sessionTime,
 				});
 			}
 		}
@@ -180,10 +184,10 @@ const seedDatabase = async () => {
 
 		// Enroll users in training sessions
 		const enrollments = [];
-		for (const user of userDocs) {
+		for (const assignment of assignmentDocs) {
 			for (let i = 0; i < 2; i++) {
 				enrollments.push({
-					employee: user._id, // Match the "Employee" field in the Enrollment model
+					assignment: assignment._id, // Match the "Assignment" field in the Enrollment model
 					session:
 						trainingSessionDocs[
 							Math.floor(

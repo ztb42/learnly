@@ -10,7 +10,7 @@
 // 	ListItemText,
 // } from "@mui/material";
 
-// const TrainingDescription = () => {
+// const TrainingDetails = () => {
 // 	const { id } = useParams();
 // 	const [training, setTraining] = useState(null);
 // 	const [trainingList, setTrainingList] = useState([]);
@@ -41,7 +41,6 @@
 // 			<Typography>Description: {training.description}</Typography>
 // 			<Typography>Training: {training.training}</Typography>
 // 			<Typography>Manager: {training.manager}</Typography>
-// 			<Typography>Trainer: {training.trainer}</Typography>
 // 			<Box mt={2}>
 // 				<Typography>Tags:</Typography>
 // 				{training.tags?.map((tag) => (
@@ -68,4 +67,4 @@
 // 	);
 // };
 
-// export default TrainingDescription;
+// export default TrainingDetails;

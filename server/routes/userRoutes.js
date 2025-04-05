@@ -170,6 +170,62 @@ router.get("/", async (req, res) => {
 	}
 });
 
+// Get all users by role name
+router.get("/role/:roleName", async (req, res) => {
+	try {
+		// Find the role by its name
+		const role = await Role.findOne({ roleName: req.params.roleName });
+		if (!role) {
+			return res.status(404).json({ message: "Role not found" });
+		}
+
+		// Find users with the role's _id
+		const users = await User.find({ role: role._id }).populate("role");
+		res.json(users);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
+// Get all employees by trainer ID
+router.get("/trainer/:trainerId/employees", async (req, res) => {
+	try {
+		// Step 1: Find all sessions for the trainer
+		const sessions = await TrainingSession.find({
+			trainer: req.params.trainerId,
+		}).select("_id"); // Only select the session IDs
+
+		const sessionIds = sessions.map((session) => session._id);
+
+		// Step 2: Find all enrollments for the trainer's sessions
+		const enrollments = await Enrollment.find({
+			session: { $in: sessionIds },
+		}).select("assignment"); // Only select the assignment IDs
+
+		const assignmentIds = enrollments.map(
+			(enrollment) => enrollment.assignment
+		);
+
+		// Step 3: Find all assignments linked to the enrollments
+		const assignments = await Assignment.find({
+			_id: { $in: assignmentIds },
+		}).select("employee"); // Only select the employee IDs
+
+		const employeeIds = assignments.map(
+			(assignment) => assignment.employee
+		);
+
+		// Step 4: Find all employees using the extracted employee IDs
+		const employees = await User.find({
+			_id: { $in: employeeIds },
+		}).populate("role");
+
+		res.json(employees);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
 // Get user by ID
 router.get("/:id", async (req, res) => {
 	try {
@@ -209,7 +265,7 @@ router.put("/:id", async (req, res) => {
 // Delete user
 router.delete("/:id", async (req, res) => {
 	try {
-		const user = await User.findById(req.params.id);
+		const user = await User.findById(req.params.id).populate("role");
 		if (!user) return res.status(404).json({ message: "User not found" });
 
 		await User.findByIdAndDelete(req.params.id);
@@ -220,6 +276,5 @@ router.delete("/:id", async (req, res) => {
 		res.status(500).json({ error: error.message });
 	}
 });
-
 
 export default router;

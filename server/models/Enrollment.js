@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
 const enrollmentSchema = new mongoose.Schema({
-	employee: {
+	assignment: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
+		ref: "Assignment",
 		required: true,
 	},
 	session: {

@@ -24,6 +24,18 @@ router.get("/", async (req, res) => {
 	}
 });
 
+// Get all Training Sessions for a specific Training Program
+router.get("/program/:trainingProgramId", async (req, res) => {
+	try {
+		const sessions = await TrainingSession.find({
+			training: req.params.trainingProgramId,
+		}).populate("trainer", "firstName lastName");
+		res.json(sessions);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
 // Get a single Training Session
 router.get("/:id", async (req, res) => {
 	try {

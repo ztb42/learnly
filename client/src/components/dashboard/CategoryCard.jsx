@@ -10,85 +10,70 @@ import {
 import ColoredAvatar from "../ColoredAvatar";
 import Progress from "../Progress";
 
-const dummyUsers = [
-	{ id: 1, name: "Jon Snow" },
-	{ id: 2, name: "Daenerys Targaryen" },
-	{ id: 3, name: "Arya Stark" },
-	{ id: 4, name: "Tyrion Lannister" },
-	{ id: 5, name: "Cersei Lannister" },
-	{ id: 6, name: "Sansa Stark" },
-	{ id: 7, name: "Jaime Lannister" },
-	{ id: 8, name: "Bran Stark" },
-	{ id: 9, name: "Brienne of Tarth" },
-	{ id: 10, name: "Sandor Clegane" },
-];
-
-const CategoryCard = ({ category }) => {
+const CategoryCard = ({ category, users }) => {
 	return (
-		<Card elevation={4} sx={{ borderRadius: "12px", position: "relative" }}>
-			<Box sx={{ position: "relative" }}>
-				<CardMedia
-					component="img"
-					height="140"
-					image={category.image}
-					alt={category.name}
-				/>
-				<Box
-					sx={{
-						position: "absolute",
-						top: 0,
-						left: 0,
-						width: "100%",
-						height: "100%",
-						backgroundColor: "rgba(0, 0, 0, 0.6)", // Black overlay with 50% opacity
-					}}
-				/>
-				<Box
-					sx={{
-						position: "absolute",
-						bottom: "20px",
-						left: "20px",
-					}}
-				>
-					<Typography
-						variant="h6"
+		<>
+			<Card
+				elevation={4}
+				sx={{ borderRadius: "12px", position: "relative" }}
+			>
+				<Box sx={{ position: "relative" }}>
+					<CardMedia
+						component="img"
+						height="140"
+						image={category.image}
+						alt={category.name}
+					/>
+					<Box
 						sx={{
-							color: "white",
+							position: "absolute",
+							top: 0,
+							left: 0,
+							width: "100%",
+							height: "100%",
+							backgroundColor: "rgba(0, 0, 0, 0.6)", // Black overlay with 50% opacity
+						}}
+					/>
+					<Box
+						sx={{
+							position: "absolute",
+							bottom: "20px",
+							left: "20px",
 						}}
 					>
-						{category.name}
-					</Typography>
-					<Typography
-						variant="body2"
-						sx={{
-							color: "darkgray",
-						}}
-					>
-						{category.projects} Trainings
-					</Typography>
+						<Typography
+							variant="h6"
+							sx={{
+								color: "white",
+							}}
+						>
+							{category.name}
+						</Typography>
+					</Box>
 				</Box>
-			</Box>
 
-			<CardContent sx={{ display: "flex", alignItems: "center" }}>
-				<div
-					style={{
-						flex: 1,
-						marginRight: "2rem",
-					}}
-				>
-					<Typography variant="body1" gutterBottom fontWeight={600}>
-						{category.progress}%
+				<CardContent sx={{ display: "flex", alignItems: "center" }}>
+					<Typography
+						variant="body1"
+						sx={{
+							flex: 1,
+							mr: 3,
+						}}
+					>
+						{category.trainings === 1
+							? `${category.trainings} training`
+							: `${category.trainings} trainings`}
 					</Typography>
-					<Progress type="linear" progress={category.progress} />
-				</div>
 
-				<AvatarGroup max={3}>
-					{dummyUsers.map((user) => (
-						<ColoredAvatar key={user.id} name={user.name} />
-					))}
-				</AvatarGroup>
-			</CardContent>
-		</Card>
+					<AvatarGroup max={3}>
+						{users?.map((user) => {
+							const name = `${user.firstName} ${user.lastName}`;
+							return <ColoredAvatar key={user._id} name={name} />;
+						})}
+					</AvatarGroup>
+				</CardContent>
+			</Card>
+		</>
 	);
 };
 

@@ -24,4 +24,16 @@ router.get("/", async (req, res) => {
 	}
 });
 
+// Get all Enrollments for a specific Assignment
+router.get("/assignment/:assignmentId", async (req, res) => {
+	try {
+		const enrollments = await Enrollment.find({
+			assignment: req.params.assignmentId,
+		});
+		res.json(enrollments);
+	} catch (error) {
+		res.status(500).json({ error: error.message });
+	}
+});
+
 export default router;

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo, useState } from "react";
 import {
 	Box,
 	Button,
@@ -18,14 +18,84 @@ import { Link } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 const Dashboard = () => {
-	const { data: trainings, loading: trainingsLoading } = useApi(
-		"/api/training-programs"
-	);
-	const { data: users, loading: usersLoading } = useApi("/api/users");
 	const { user } = useAuth();
-
 	// Safely access the role name
-	const currentUserRole = user?.role?.roleName || "Guest";
+	const currentRole = user?.role?.roleName || "Guest";
+	const [searchQuery, setSearchQuery] = useState("");
+
+	let trainingsEndpoint = "/api/training-programs";
+	let usersEndpoint = "/api/users";
+	if (currentRole === "Manager") {
+		trainingsEndpoint = `/api/training-programs/manager/${user._id}`;
+		usersEndpoint = "/api/users/role/Employee";
+	} else if (currentRole === "Trainer") {
+		trainingsEndpoint = `/api/training-programs/trainer/${user._id}`;
+		usersEndpoint = `/api/users/trainer/${user._id}/employees`;
+	} else if (currentRole === "Employee") {
+		trainingsEndpoint = `/api/training-programs/employee/${user._id}`;
+	}
+
+	const { data: trainings = [], loading: trainingsLoading } =
+		useApi(trainingsEndpoint);
+	const {
+		data: users,
+		loading: usersLoading,
+		refetch,
+	} = useApi(usersEndpoint, currentRole !== "Employee");
+
+	const filteredTrainings = trainings.filter((training) => {
+		const title = training.title?.toLowerCase() || "";
+		const description = training.description?.toLowerCase() || "";
+		const query = searchQuery.toLowerCase();
+		return title.includes(query) || description.includes(query);
+	});
+
+	// --- Auto-Categorization Logic ---
+	const categorizeTraining = (training) => {
+		const description = training.description?.toLowerCase() || "";
+
+		// Define a mapping of categories to their keywords
+		const categoryKeywords = {
+			Frontend: ["react", "html", "css", "design", "frontend"],
+			Backend: ["node", "express", "api", "backend", "database"],
+		};
+
+		// Find the first category whose keywords match the description
+		for (const [category, keywords] of Object.entries(categoryKeywords)) {
+			if (keywords.some((keyword) => description.includes(keyword))) {
+				return category;
+			}
+		}
+
+		// Default category if no match is found
+		return "Other";
+	};
+
+	const categorizedTrainings = trainings.reduce((acc, training) => {
+		const category = categorizeTraining(training);
+		if (!acc[category]) acc[category] = [];
+		acc[category].push(training);
+		return acc;
+	}, {});
+
+	const categoryImages = {
+		Frontend:
+			"https://images.unsplash.com/photo-1522542550221-31fd19575a2d?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+		Backend:
+			"https://plus.unsplash.com/premium_photo-1661386257356-c17257862be8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fGRhdGFiYXNlfGVufDB8fDB8fHww",
+		Other: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1420&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+	};
+
+	const randomUsers = useMemo(() => {
+		const randomUserCount = Math.floor(Math.random() * 30) + 1;
+		return [...users]
+			.sort(() => 0.5 - Math.random())
+			.slice(0, randomUserCount);
+	}, [users]);
+
+	// Optional: fallback image
+	const defaultImage =
+		"https://images.unsplash.com/photo-1507209696999-3c532be9b2b8";
 
 	return (
 		<Container
@@ -34,58 +104,82 @@ const Dashboard = () => {
 			sx={{ p: 2, mt: "3rem" }}
 		>
 			<Typography component="h1" variant="h4" gutterBottom>
-				{currentUserRole} Dashboard
+				{currentRole} Dashboard
 			</Typography>
+			<TextField
+				label="Search Trainings"
+				fullWidth
+				sx={{ mb: 4 }}
+				value={searchQuery}
+				onChange={(e) => setSearchQuery(e.target.value)}
+			/>
 
-			<TextField label="Search Trainings" fullWidth sx={{ mb: 4 }} />
-
-			<Typography component="h2" variant="h5" mb={3}>
-				Training Categories
-			</Typography>
-			<Grid2 container spacing={8} mb={6}>
-				<Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-					<CategoryCard
-						category={{
-							name: "Web Design",
-							projects: 12,
-							progress: 80,
-							image: "https://images.unsplash.com/photo-1522542550221-31fd19575a2d?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-						}}
-					/>
-				</Grid2>
-				<Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-					<CategoryCard
-						category={{
-							name: "Backend",
-							projects: 20,
-							progress: 60,
-							image: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1420&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-						}}
-					/>
-				</Grid2>
-				<Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-					<CategoryCard
-						category={{
-							name: "Data Science",
-							projects: 8,
-							progress: 40,
-							image: "https://plus.unsplash.com/premium_photo-1661386257356-c17257862be8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fGRhdGFiYXNlfGVufDB8fDB8fHww",
-						}}
-					/>
-				</Grid2>
-			</Grid2>
+			{["Admin", "Manager"].includes(currentRole) && (
+				<Box>
+					<Typography component="h2" variant="h5" mb={3}>
+						Training Categories
+					</Typography>
+					<Grid2 container spacing={8} mb={6}>
+						{Object.entries(categorizedTrainings)
+							.sort(([a], [b]) => {
+								if (a === "Other") return 1; // Move "Other" to the end
+								if (b === "Other") return -1;
+								return a.localeCompare(b); // Sort alphabetically otherwise
+							})
+							.map(([categoryName, categoryTrainings]) => {
+								return (
+									<Grid2
+										key={categoryName}
+										size={{ xs: 12, sm: 6, md: 4 }}
+									>
+										<CategoryCard
+											category={{
+												name: categoryName,
+												trainings:
+													categoryTrainings.length,
+												progress:
+													Math.round(
+														categoryTrainings.reduce(
+															(sum, t) =>
+																sum +
+																(t.progress ||
+																	0),
+															0
+														) /
+															categoryTrainings.length
+													) || 0,
+												image:
+													categoryImages[
+														categoryName
+													] || defaultImage,
+											}}
+											users={randomUsers} // Use memoized random users
+										/>
+									</Grid2>
+								);
+							})}
+					</Grid2>
+				</Box>
+			)}
 
 			<Grid2 container spacing={8} sx={{ minHeight: "550px" }}>
 				<TrainingsSection
-					trainings={trainings}
+					trainings={filteredTrainings}
 					trainingsLoading={trainingsLoading}
 				/>
 
-				<UsersSection users={users} usersLoading={usersLoading} />
+				<UsersSection
+					users={users}
+					usersLoading={usersLoading}
+					refetch={refetch}
+					currentRole={currentRole}
+				/>
 			</Grid2>
 		</Container>
 	);
 };
+
+export default Dashboard;
 
 const TrainingsSection = ({ trainings, trainingsLoading }) => {
 	return (
@@ -102,7 +196,7 @@ const TrainingsSection = ({ trainings, trainingsLoading }) => {
 				<Typography component="h2" variant="h5" sx={{ flexGrow: 1 }}>
 					Trainings
 				</Typography>
-				<Link to="/create-training">
+				<Link to="/training-programs/new">
 					<IconButton sx={{ mr: 2 }}>
 						<AddIcon />
 					</IconButton>
@@ -121,6 +215,15 @@ const TrainingsSection = ({ trainings, trainingsLoading }) => {
 					flexDirection: "column",
 				}}
 			>
+				{trainings.length === 0 && (
+					<Typography
+						variant="body1"
+						color="textSecondary"
+						align="center"
+					>
+						No trainings found.
+					</Typography>
+				)}
 				{trainingsLoading ? (
 					<Progress
 						sx={{
@@ -129,7 +232,7 @@ const TrainingsSection = ({ trainings, trainingsLoading }) => {
 					/>
 				) : (
 					trainings
-						.slice(0, 4)
+						.slice(0, 3)
 						.map((training) => (
 							<TrainingCard
 								key={training._id}
@@ -142,7 +245,11 @@ const TrainingsSection = ({ trainings, trainingsLoading }) => {
 	);
 };
 
-const UsersSection = ({ users, usersLoading }) => {
+const UsersSection = ({ users, usersLoading, refetch, currentRole }) => {
+	const handleUserDelete = () => {
+		refetch(); // Refetch users after deletion
+	};
+
 	return (
 		<Grid2
 			size={{ xs: 12, sm: 6 }}
@@ -159,7 +266,7 @@ const UsersSection = ({ users, usersLoading }) => {
 				}}
 			>
 				<Typography component="h2" variant="h5" sx={{ flexGrow: 1 }}>
-					Users
+					{currentRole === "Admin" ? "Users" : "Employees"}
 				</Typography>
 				<Link to="/users/new">
 					<IconButton sx={{ mr: 2 }}>
@@ -189,11 +296,15 @@ const UsersSection = ({ users, usersLoading }) => {
 				) : (
 					users
 						.slice(0, 7)
-						.map((user) => <UserCard key={user._id} user={user} />)
+						.map((user) => (
+							<UserCard
+								key={user._id}
+								user={user}
+								handleUserDelete={handleUserDelete}
+							/>
+						))
 				)}
 			</Box>
 		</Grid2>
 	);
 };
-
-export default Dashboard;

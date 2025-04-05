@@ -9,17 +9,11 @@ const trainingProgramSchema = new mongoose.Schema({
 		ref: "User",
 		required: false,
 	},
-	trainer: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: "User",
-		required: false,
-	},
 	deadline: { type: Date, required: true },
-	startTime: { type: String },
-	endTime: { type: String },
-	tags: [String],
-	training: { type: String },
 });
 
-const TrainingProgram = mongoose.model("TrainingProgram", trainingProgramSchema);
+const TrainingProgram = mongoose.model(
+	"TrainingProgram",
+	trainingProgramSchema
+);
 export default TrainingProgram;
