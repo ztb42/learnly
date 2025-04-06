@@ -100,7 +100,7 @@ const Dashboard = () => {
 	return (
 		<Container
 			className="dashboard"
-			maxWidth="lg"
+			maxWidth={currentRole === "Employee" ? "md" : "lg"}
 			sx={{ p: 2, mt: "3rem" }}
 		>
 			<Typography component="h1" variant="h4" gutterBottom>
@@ -166,6 +166,7 @@ const Dashboard = () => {
 				<TrainingsSection
 					trainings={filteredTrainings}
 					trainingsLoading={trainingsLoading}
+					currentRole={currentRole}
 				/>
 
 				<UsersSection
@@ -181,10 +182,12 @@ const Dashboard = () => {
 
 export default Dashboard;
 
-const TrainingsSection = ({ trainings, trainingsLoading }) => {
+const TrainingsSection = ({ trainings, trainingsLoading, currentRole }) => {
+	const isEmployee = currentRole === "Employee";
+
 	return (
 		<Grid2
-			size={{ xs: 12, sm: 6 }}
+			size={isEmployee ? 12 : { xs: 12, sm: 6 }}
 			sx={{ display: "flex", flexDirection: "column" }}
 		>
 			<Box
@@ -194,7 +197,7 @@ const TrainingsSection = ({ trainings, trainingsLoading }) => {
 				}}
 			>
 				<Typography component="h2" variant="h5" sx={{ flexGrow: 1 }}>
-					Trainings
+					{isEmployee && "Assigned "} Trainings
 				</Typography>
 				<Link to="/training-programs/new">
 					<IconButton sx={{ mr: 2 }}>
@@ -220,6 +223,7 @@ const TrainingsSection = ({ trainings, trainingsLoading }) => {
 						variant="body1"
 						color="textSecondary"
 						align="center"
+						mt={2}
 					>
 						No trainings found.
 					</Typography>
@@ -249,6 +253,11 @@ const UsersSection = ({ users, usersLoading, refetch, currentRole }) => {
 	const handleUserDelete = () => {
 		refetch(); // Refetch users after deletion
 	};
+
+	// Only render the section if currentRole is not "Employee"
+	if (currentRole === "Employee") {
+		return null;
+	}
 
 	return (
 		<Grid2
@@ -287,6 +296,16 @@ const UsersSection = ({ users, usersLoading, refetch, currentRole }) => {
 					flexDirection: "column",
 				}}
 			>
+				{users.length === 0 && (
+					<Typography
+						variant="body1"
+						color="textSecondary"
+						align="center"
+						mt={2}
+					>
+						No users found.
+					</Typography>
+				)}
 				{usersLoading ? (
 					<Progress
 						sx={{

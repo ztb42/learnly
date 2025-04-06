@@ -27,7 +27,16 @@ function App() {
 			children: [
 				// Protected routes
 				{
-					element: <ProtectedRoute allowedRoles={["admin"]} />,
+					element: (
+						<ProtectedRoute
+							allowedRoles={[
+								"Admin",
+								"Manager",
+								"Trainer",
+								"Employee",
+							]}
+						/>
+					),
 					children: [
 						{ index: true, element: <Dashboard /> },
 
@@ -36,6 +45,10 @@ function App() {
 							children: [
 								{ index: true, element: <TrainingPrograms /> },
 								{ path: "new", element: <TrainingForm /> },
+								// {
+								// 	path: ":id",
+								// 	element: <TrainingDetails />,
+								// },
 								{
 									path: ":id/edit",
 									element: <TrainingForm />,
@@ -46,10 +59,40 @@ function App() {
 						// ✅ USER routes (updated and working)
 						{
 							path: "users",
+							element: (
+								<ProtectedRoute
+									allowedRoles={[
+										"Admin",
+										"Manager",
+										"Trainer",
+									]}
+								/>
+							),
 							children: [
-								{ index: true, element: <UserManagement /> },
-								{ path: "new", element: <UserForm /> },
-								{ path: ":id/edit", element: <UserForm /> },
+								{
+									index: true,
+									element: <UserManagement />,
+								},
+								{
+									path: "new",
+									element: (
+										<ProtectedRoute
+											allowedRoles={["Admin"]}
+										>
+											<UserForm />
+										</ProtectedRoute>
+									),
+								},
+								{
+									path: ":id/edit",
+									element: (
+										<ProtectedRoute
+											allowedRoles={["Admin"]}
+										>
+											<UserForm />
+										</ProtectedRoute>
+									),
+								},
 							],
 						},
 					],

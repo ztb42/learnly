@@ -3,6 +3,7 @@ import useAuth from "../hooks/useAuth";
 
 const ProtectedRoute = ({ allowedRoles }) => {
 	const { user } = useAuth();
+	const currentRole = user?.role?.roleName;
 
 	// If user is not logged in, redirect to login
 	if (!user) {
@@ -10,7 +11,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
 	}
 
 	// If user is logged in but doesn't have the correct role, redirect
-	if (!allowedRoles.includes(user.role.roleName.toLowerCase())) {
+	if (!allowedRoles.includes(currentRole)) {
 		return <Navigate to="/not-authorized" replace />;
 	}
 

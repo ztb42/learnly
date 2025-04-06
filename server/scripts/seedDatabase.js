@@ -45,6 +45,30 @@ const seedDatabase = async () => {
 				password: await bcrypt.hash("password", 10),
 				role: roleDocs[0]._id, // Admin role
 			},
+			{
+				firstName: "John",
+				lastName: "Manager",
+				username: "manager",
+				email: "manager@example.com",
+				password: await bcrypt.hash("password", 10),
+				role: roleDocs[1]._id, // Manager role
+			},
+			{
+				firstName: "John",
+				lastName: "Trainer",
+				username: "trainer",
+				email: "trainer@example.com",
+				password: await bcrypt.hash("password", 10),
+				role: roleDocs[2]._id, // Trainer role
+			},
+			{
+				firstName: "John",
+				lastName: "Employee",
+				username: "employee",
+				email: "employee@example.com",
+				password: await bcrypt.hash("password", 10),
+				role: roleDocs[3]._id, // Employee role
+			},
 		];
 		for (const role of roleDocs) {
 			for (let i = 0; i < 11; i++) {
@@ -201,9 +225,9 @@ const seedDatabase = async () => {
 
 		// Generate completion statuses
 		const completionStatuses = [];
-		for (const enrollment of enrollmentDocs) {
+		for (const assignment of assignmentDocs) {
 			completionStatuses.push({
-				enrollment: enrollment._id, // Match the "Enrollment" field in the CompletionStatus model
+				assignment: assignment._id, // Match the "Assignment" field in the CompletionStatus model
 				trainer:
 					trainers[Math.floor(Math.random() * trainers.length)]._id, // Assign a random trainer
 				completionDate: faker.date.recent(), // Add a recent date for completion

@@ -1,9 +1,9 @@
 import mongoose from "mongoose";
 
 const completionStatusSchema = new mongoose.Schema({
-	enrollment: {
+	assignment: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: "Enrollment",
+		ref: "Assignment",
 		required: true,
 	},
 	trainer: {
