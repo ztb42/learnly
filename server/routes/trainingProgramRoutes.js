@@ -115,20 +115,43 @@ router.get("/trainer/:trainerId", async (req, res) => {
 	}
 });
 
+// // Get all Training Programs for a specific Employee
+// router.get("/employee/:employeeId", async (req, res) => {
+// 	try {
+// 		// Find all assignments for the employee
+// 		const assignments = await Assignment.find({
+// 			employee: req.params.employeeId,
+// 		}).select("trainingId"); // Only select the trainingId field
+
+// 		// Extract unique training program IDs
+// 		const trainingIds = [
+// 			...new Set(assignments.map((assignment) => assignment.trainingId)),
+// 		];
+
+// 		// Find the training programs using the extracted IDs
+// 		const trainings = await TrainingProgram.find({
+// 			_id: { $in: trainingIds },
+// 		});
+
+// 		res.json(trainings);
+// 	} catch (error) {
+// 		res.status(500).json({ error: error.message });
+// 	}
+// });
 // Get all Training Programs for a specific Employee
 router.get("/employee/:employeeId", async (req, res) => {
 	try {
-		// Find all assignments for the employee
+		// Buscar asignaciones para el empleado y seleccionar el campo correcto
 		const assignments = await Assignment.find({
 			employee: req.params.employeeId,
-		}).select("trainingId"); // Only select the trainingId field
+		}).select("training");
 
-		// Extract unique training program IDs
+		// Extraer los IDs únicos de los trainings asignados
 		const trainingIds = [
-			...new Set(assignments.map((assignment) => assignment.trainingId)),
+			...new Set(assignments.map((assignment) => assignment.training)),
 		];
 
-		// Find the training programs using the extracted IDs
+		// Obtener los training programs usando los IDs
 		const trainings = await TrainingProgram.find({
 			_id: { $in: trainingIds },
 		});
