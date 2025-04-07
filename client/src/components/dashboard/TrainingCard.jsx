@@ -19,12 +19,25 @@ const TrainingCard = ({ training }) => {
     ? `${training.manager.firstName} ${training.manager.lastName}`
     : "Unassigned";
 
+  const handleCardClick = () => {
+    navigate(`/training-programs/${training._id}`);
+  };
+
   const handleEdit = (trainingId) => {
     navigate(`/training-programs/${trainingId}/edit`);
   };
 
   return (
-    <Card variant="outlined" sx={{ mt: 2 }}>
+    <Card
+      variant="outlined"
+      sx={{
+        mt: 2,
+
+        cursor: "pointer",
+        "&:hover": { boxShadow: 3 },
+      }}
+      onClick={handleCardClick}
+    >
       <CardContent>
         <Typography variant="h6">{training.title}</Typography>
         <Typography variant="body2" sx={{ color: "darkgray" }}>

@@ -15,14 +15,23 @@ import useApi from "../hooks/useApi";
 import Progress from "../components/Progress";
 import { useSnackbar } from "notistack";
 import TrainingCard from "../components/dashboard/TrainingCard";
+import useAuth from "../hooks/useAuth";
 
 const TrainingPrograms = () => {
+  const { user } = useAuth();
+  const currentRole = user?.role?.roleName;
+
+  let trainingsEndpoint = "/api/training-programs";
+  if (currentRole === "Manager") {
+    trainingsEndpoint = `/api/training-programs/manager/${user._id}`;
+  }
+
   const {
     data: trainings,
     loading,
     deleteItem,
     refetch,
-  } = useApi("/api/training-programs");
+  } = useApi(trainingsEndpoint);
 
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -94,15 +103,17 @@ const TrainingPrograms = () => {
           {filteredTrainings.map((training) => (
             <div className="col-md-4 mb-4" key={training._id}>
               <TrainingCard training={training} />
-              <Box sx={{ mt: 1, textAlign: "right" }}>
-                <Button
-                  variant="outlined"
-                  color="error"
-                  onClick={() => handleDeleteClick(training)}
-                >
-                  Delete
-                </Button>
-              </Box>
+              {currentRole !== "Manager" && (
+                <Box sx={{ mt: 1, textAlign: "right" }}>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleDeleteClick(training)}
+                  >
+                    Delete
+                  </Button>
+                </Box>
+              )}
             </div>
           ))}
         </div>

@@ -12,6 +12,7 @@ import ErrorPage from "./pages/Error";
 import ProtectedRoute from "./components/ProtectedRoute";
 import UserForm from "./pages/UserForm";
 import TrainingForm from "./pages/TrainingForm";
+import TrainingDetails from "./pages/TrainingDetails";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
@@ -45,10 +46,10 @@ function App() {
 							children: [
 								{ index: true, element: <TrainingPrograms /> },
 								{ path: "new", element: <TrainingForm /> },
-								// {
-								// 	path: ":id",
-								// 	element: <TrainingDetails />,
-								// },
+								{
+									path: ":id",
+									element: <TrainingDetails />,
+								},
 								{
 									path: ":id/edit",
 									element: <TrainingForm />,
