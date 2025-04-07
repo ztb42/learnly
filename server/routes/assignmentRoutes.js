@@ -59,6 +59,23 @@ router.delete("/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+// Delete assignment by training ID and employee ID (used for marking complete)
+router.delete("/complete/:trainingId/:employeeId", async (req, res) => {
+  try {
+    const assignment = await Assignment.findOneAndDelete({
+      training: req.params.trainingId,
+      employee: req.params.employeeId,
+    });
+
+    if (!assignment) {
+      return res.status(404).json({ message: "Assignment not found" });
+    }
+
+    res.json({ message: "Assignment marked as complete" });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Get all employees assigned to a specific training program
 router.get("/training/:trainingId/employees", async (req, res) => {
@@ -73,5 +90,18 @@ router.get("/training/:trainingId/employees", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+
+// Get all assignments for a specific training program (used to map employee to assignmentId)
+router.get("/training/:trainingId", async (req, res) => {
+  try {
+    const assignments = await Assignment.find({
+      training: req.params.trainingId,
+    }).populate("employee", "firstName lastName email");
+    res.json(assignments);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 export default router;
