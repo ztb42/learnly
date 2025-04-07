@@ -1,5 +1,6 @@
-import dotenv from "dotenv";
-dotenv.config();
+// import dotenv from "dotenv";
+// dotenv.config();
+import("dotenv").then((dotenv) => dotenv.config());
 
 import express from "express";
 import mongoose from "mongoose";
@@ -12,25 +13,23 @@ import assignmentRoutes from "./routes/assignmentRoutes.js";
 import enrollmentRoutes from "./routes/enrollmentRoutes.js";
 import completionStatusRoutes from "./routes/completionStatusRoutes.js";
 
-
-
 const app = express();
 app.use(express.json());
 
 const corsOptions = {
-	origin: ["https://learnlywsu.netlify.app", "http://localhost:5173"],
-	credentials: true,
+  origin: ["https://learnlywsu.netlify.app", "http://localhost:5173"],
+  credentials: true,
 };
 app.use(cors(corsOptions));
 
 const connectDB = async () => {
-	try {
-		await mongoose.connect(process.env.MONGO_URI);
-		console.log("✅ MongoDB Connected");
-	} catch (error) {
-		console.error("❌ MongoDB Connection Failed:", error);
-		process.exit(1);
-	}
+  try {
+    await mongoose.connect(process.env.MONGO_URI);
+    console.log("✅ MongoDB Connected");
+  } catch (error) {
+    console.error("❌ MongoDB Connection Failed:", error);
+    process.exit(1);
+  }
 };
 
 connectDB();
