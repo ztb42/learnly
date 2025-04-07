@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
-const ProtectedRoute = ({ allowedRoles }) => {
+const ProtectedRoute = ({ allowedRoles, children }) => {
 	const { user } = useAuth();
 	const currentRole = user?.role?.roleName;
 
@@ -16,7 +16,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
 	}
 
 	// Render the protected component
-	return <Outlet />;
+	return children ? children : <Outlet />;
 };
 
 export default ProtectedRoute;
