@@ -228,7 +228,7 @@ const TrainingDetails = () => {
                   </Box>
                   {currentRole === "trainer" && (
                     <Button color="success" variant="outlined" onClick={() => handleMarkComplete(employee._id)}>
-                      Marcar como completo
+                      Mark as completed
                     </Button>
                   )}
                 </Box>
