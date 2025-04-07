@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import useApi from "../hooks/useApi";
 import Progress from "../components/Progress";
 import { useSnackbar } from "notistack";
-
+import { Link } from "react-router-dom";
 const TrainingPrograms = () => {
 	const {
 		data: trainings,
@@ -138,6 +138,11 @@ const TrainingPrograms = () => {
 											justifyContent: "flex-end",
 										}}
 									>
+										<Link to={`/training-programs/${training._id}`}>
+										<Button variant="outlined" color="secondary">
+										View
+										</Button>
+										</Link>
 										<Button
 											variant="contained"
 											color="primary"

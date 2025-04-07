@@ -5,6 +5,7 @@ import Assignment from "../models/Assignment.js";
 
 const router = express.Router();
 
+//Create a new training program and link sessions
 router.post("/", async (req, res) => {
 	try {
 		const { sessions, ...trainingData } = req.body;
@@ -13,13 +14,18 @@ router.post("/", async (req, res) => {
 		const training = new TrainingProgram(trainingData);
 		await training.save();
 
-		// Create associated sessions
+		// ✅ Create and link sessions
 		if (sessions && sessions.length > 0) {
 			const sessionDocs = sessions.map((session) => ({
 				...session,
-				training: training._id, // Link the session to the training program
+				training: training._id, // link each session to this training
 			}));
-			await TrainingSession.insertMany(sessionDocs);
+
+			const savedSessions = await TrainingSession.insertMany(sessionDocs);
+
+			// ✅ Update the training with the sessions
+			training.sessions = savedSessions.map((s) => s._id);
+			await training.save();
 		}
 
 		res.status(201).json(training);
@@ -27,6 +33,7 @@ router.post("/", async (req, res) => {
 		res.status(500).json({ error: error.message });
 	}
 });
+
 
 // Update a Training Program
 router.put("/:id", async (req, res) => {
@@ -175,5 +182,26 @@ router.delete("/:id", async (req, res) => {
 		res.status(500).json({ error: error.message });
 	}
 });
+
+// View/Enroll in Training Details Page
+router.get("/:id", async (req, res) => {
+	try {
+		const training = await TrainingProgram.findById(req.params.id)
+			.populate({
+				path: "sessions",
+				populate: { path: "trainer", select: "firstName lastName" },
+			})
+			.populate("manager", "firstName lastName");
+
+		if (!training) return res.status(404).json({ error: "Training not found" });
+
+		res.json(training);
+	} catch (err) {
+		res.status(500).json({ error: err.message });
+	}
+});
+
+
+
 
 export default router;

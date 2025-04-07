@@ -10,10 +10,13 @@ const trainingProgramSchema = new mongoose.Schema({
 		required: false,
 	},
 	deadline: { type: Date, required: true },
+	sessions: [{ type: mongoose.Schema.Types.ObjectId, ref: "TrainingSession" }]
 });
+
 
 const TrainingProgram = mongoose.model(
 	"TrainingProgram",
 	trainingProgramSchema
 );
 export default TrainingProgram;
+
