@@ -361,7 +361,7 @@ const TrainingDetails = () => {
 											</Typography>
 										</Box>
 									</Box>
-									{currentRole === "Admin" && (
+									{currentRole === "Trainer" && (
 										<Button
 											color="success"
 											variant="outlined"
