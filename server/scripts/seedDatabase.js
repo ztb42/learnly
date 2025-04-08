@@ -7,7 +7,6 @@ import TrainingProgram from "../models/TrainingProgram.js";
 import TrainingSession from "../models/TrainingSession.js";
 import Assignment from "../models/Assignment.js";
 import Enrollment from "../models/Enrollment.js";
-import CompletionStatus from "../models/CompletionStatus.js";
 import { faker } from "@faker-js/faker";
 
 dotenv.config({ path: "../.env" });
@@ -27,7 +26,6 @@ const seedDatabase = async () => {
 		await TrainingSession.deleteMany();
 		await Assignment.deleteMany();
 		await Enrollment.deleteMany();
-		await CompletionStatus.deleteMany();
 
 		// Create roles
 		const roles = ["Admin", "Manager", "Trainer", "Employee"];
@@ -191,17 +189,37 @@ const seedDatabase = async () => {
 			trainingSessions
 		);
 
+		const employeeRole = await Role.findOne({ roleName: "Employee" });
+		if (!employeeRole) {
+			console.error(
+				"Employee role not found! Ensure roles are seeded correctly."
+			);
+			process.exit(1);
+		}
+
+		// Fetch all employees
+		const employees = await User.find({ role: employeeRole._id });
+		if (employees.length === 0) {
+			console.error(
+				"No employees found! Ensure at least one employee exists."
+			);
+			process.exit(1);
+		}
+
 		// Assign users to training programs
 		const assignments = [];
-		for (const user of userDocs) {
+		for (const employee of employees) {
+			// Assign each employee to 2 training programs
 			assignments.push({
-				employee: user._id, // Match the "Employee" field in the Assignment model
+				employee: employee._id, // Match the "Employee" field in the Assignment model
 				training:
 					trainingProgramDocs[
 						Math.floor(Math.random() * trainingProgramDocs.length)
 					]._id,
 				assignedByManager:
 					managers[Math.floor(Math.random() * managers.length)]._id, // Assign a random manager
+				status: "Assigned",
+				completionDate: null, // Initially null
 			});
 		}
 		const assignmentDocs = await Assignment.insertMany(assignments);
@@ -222,19 +240,6 @@ const seedDatabase = async () => {
 			}
 		}
 		const enrollmentDocs = await Enrollment.insertMany(enrollments);
-
-		// Generate completion statuses
-		const completionStatuses = [];
-		for (const assignment of assignmentDocs) {
-			completionStatuses.push({
-				assignment: assignment._id, // Match the "Assignment" field in the CompletionStatus model
-				trainer:
-					trainers[Math.floor(Math.random() * trainers.length)]._id, // Assign a random trainer
-				completionDate: faker.date.recent(), // Add a recent date for completion
-				status: Math.random() > 0.5 ? "Completed" : "Pending", // Match the "Status" field in the CompletionStatus model
-			});
-		}
-		await CompletionStatus.insertMany(completionStatuses);
 
 		console.log("Database seeded successfully! 🎉");
 		mongoose.connection.close();

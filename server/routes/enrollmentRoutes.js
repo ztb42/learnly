@@ -36,18 +36,16 @@ router.get("/", async (req, res) => {
 // 	}
 // });
 
-// Get all assignments for a specific training program
+// Get all enrollments for a specific training program
 router.get("/training/:trainingId", async (req, res) => {
 	try {
-	  const assignments = await Assignment.find({
-		training: req.params.trainingId,
-	  }).populate("employee"); // <- esto es CLAVE para poder hacer match con user._id en el frontend
-  
-	  res.json(assignments);
+		const enrollments = await Enrollment.find({
+			training: req.params.trainingId,
+		});
+		res.json(enrollments);
 	} catch (error) {
-	  res.status(500).json({ error: error.message });
+		res.status(500).json({ error: error.message });
 	}
-  });
-  
+});
 
 export default router;

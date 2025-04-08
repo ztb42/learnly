@@ -16,6 +16,7 @@ import ColoredAvatar from "./ColoredAvatar";
 const Navbar = () => {
 	const [mobileOpen, setMobileOpen] = useState(false);
 	const { user, logout } = useAuth();
+	const currentRole = user?.role?.roleName;
 
 	const toggleDrawer = (open) => (event) => {
 		if (
@@ -31,11 +32,11 @@ const Navbar = () => {
 		{ path: "/", label: "Dashboard" },
 		{ path: "/training-programs", label: "Trainings" },
 		{ path: "/users", label: "Users" },
-		{ path: "/login", label: "Login" },
-		{ path: "/forgot-password", label: "Forgot Password" },
-		{ path: "/users/new", label: "User Creation" },
-		{ path: "/training-programs/new", label: "Training Creation" },
 	];
+
+	if (currentRole !== "Admin") {
+		navItems.splice(2, 1); // Remove the "Users" link for Employees
+	}
 
 	return (
 		<nav className="navbar">
@@ -64,18 +65,20 @@ const Navbar = () => {
 
 				{/* Desktop Navigation */}
 				<div className="d-none d-lg-flex align-items-center flex-grow-1">
-					{navItems.map((item, index) => (
+					{navItems.map((item) => (
 						<NavLink
 							key={item.path}
 							to={item.path}
-							className={`nav-link ${
-								index === 2 ? "me-auto" : ""
-							}`}
+							className="nav-link"
 						>
 							{item.label}
 						</NavLink>
 					))}
-					<NavLink to="#" className="nav-link" onClick={logout}>
+					<NavLink
+						to="#"
+						className="nav-link ms-auto"
+						onClick={logout}
+					>
 						Log Out
 					</NavLink>
 					<div className="nav-link logo mx-3">

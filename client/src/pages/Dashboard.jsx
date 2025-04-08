@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import {
 	Box,
 	Button,
@@ -19,10 +19,10 @@ import useAuth from "../hooks/useAuth";
 
 const Dashboard = () => {
 	const { user } = useAuth();
-	// Safely access the role name
 	const currentRole = user?.role?.roleName || "Guest";
 	const [searchQuery, setSearchQuery] = useState("");
 
+	// Define endpoints based on the current user's role
 	let trainingsEndpoint = "/api/training-programs";
 	let usersEndpoint = "/api/users";
 	if (currentRole === "Manager") {
@@ -35,14 +35,21 @@ const Dashboard = () => {
 		trainingsEndpoint = `/api/training-programs/employee/${user._id}`;
 	}
 
-	const { data: trainings = [], loading: trainingsLoading } =
+	// Fetch trainings, users and assignments data
+	const { data: trainings, loading: trainingsLoading } =
 		useApi(trainingsEndpoint);
 	const {
 		data: users,
 		loading: usersLoading,
 		refetch,
 	} = useApi(usersEndpoint, currentRole !== "Employee");
+	// Only load assignments for roles that need them
+	const { data: assignments } = useApi(
+		"/api/assignments",
+		["Admin", "Manager"].includes(currentRole)
+	);
 
+	// Filter trainings based on the search query
 	const filteredTrainings = trainings.filter((training) => {
 		const title = training.title?.toLowerCase() || "";
 		const description = training.description?.toLowerCase() || "";
@@ -54,23 +61,22 @@ const Dashboard = () => {
 	const categorizeTraining = (training) => {
 		const description = training.description?.toLowerCase() || "";
 
-		// Define a mapping of categories to their keywords
+		// Define category keywords mapping
 		const categoryKeywords = {
 			Frontend: ["react", "html", "css", "design", "frontend"],
 			Backend: ["node", "express", "api", "backend", "database"],
 		};
 
-		// Find the first category whose keywords match the description
+		// Return the first matching category or default to "Other"
 		for (const [category, keywords] of Object.entries(categoryKeywords)) {
 			if (keywords.some((keyword) => description.includes(keyword))) {
 				return category;
 			}
 		}
-
-		// Default category if no match is found
 		return "Other";
 	};
 
+	// Categorize all trainings
 	const categorizedTrainings = trainings.reduce((acc, training) => {
 		const category = categorizeTraining(training);
 		if (!acc[category]) acc[category] = [];
@@ -78,24 +84,17 @@ const Dashboard = () => {
 		return acc;
 	}, {});
 
+	// Optional: fallback image for categories
+	const defaultImage =
+		"https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1420&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+
 	const categoryImages = {
 		Frontend:
 			"https://images.unsplash.com/photo-1522542550221-31fd19575a2d?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
 		Backend:
 			"https://plus.unsplash.com/premium_photo-1661386257356-c17257862be8?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTN8fGRhdGFiYXNlfGVufDB8fDB8fHww",
-		Other: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?q=80&w=1420&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+		Other: defaultImage,
 	};
-
-	const randomUsers = useMemo(() => {
-		const randomUserCount = Math.floor(Math.random() * 30) + 1;
-		return [...users]
-			.sort(() => 0.5 - Math.random())
-			.slice(0, randomUserCount);
-	}, [users]);
-
-	// Optional: fallback image
-	const defaultImage =
-		"https://images.unsplash.com/photo-1507209696999-3c532be9b2b8";
 
 	return (
 		<Container
@@ -122,11 +121,54 @@ const Dashboard = () => {
 					<Grid2 container spacing={8} mb={6}>
 						{Object.entries(categorizedTrainings)
 							.sort(([a], [b]) => {
-								if (a === "Other") return 1; // Move "Other" to the end
+								// Move "Other" category to the end
+								if (a === "Other") return 1;
 								if (b === "Other") return -1;
-								return a.localeCompare(b); // Sort alphabetically otherwise
+								return a.localeCompare(b);
 							})
 							.map(([categoryName, categoryTrainings]) => {
+								// For each training in this category, get assignments matching the training ID
+								const enrolledUsersForCategory =
+									categoryTrainings.flatMap((training) => {
+										const relevantAssignments =
+											assignments?.filter(
+												(assignment) =>
+													assignment.training ===
+													training._id
+											) || [];
+										// Map each assignment to its corresponding user object
+										return relevantAssignments.map(
+											(assignment) =>
+												users.find(
+													(u) =>
+														u._id ===
+														assignment.employee
+												)
+										);
+									});
+
+								// Remove duplicate users and filter out any falsy values
+								const uniqueEnrolledUsers = Array.from(
+									new Set(
+										enrolledUsersForCategory
+											.filter(Boolean)
+											.map((u) => u._id)
+									)
+								).map((uniqueUserId) =>
+									enrolledUsersForCategory.find(
+										(u) => u?._id === uniqueUserId
+									)
+								);
+
+								// Calculate average progress for this category
+								const categoryProgress =
+									Math.round(
+										categoryTrainings.reduce(
+											(sum, t) => sum + (t.progress || 0),
+											0
+										) / categoryTrainings.length
+									) || 0;
+
 								return (
 									<Grid2
 										key={categoryName}
@@ -135,25 +177,14 @@ const Dashboard = () => {
 										<CategoryCard
 											category={{
 												name: categoryName,
-												trainings:
-													categoryTrainings.length,
-												progress:
-													Math.round(
-														categoryTrainings.reduce(
-															(sum, t) =>
-																sum +
-																(t.progress ||
-																	0),
-															0
-														) /
-															categoryTrainings.length
-													) || 0,
+												trainings: categoryTrainings,
+												progress: categoryProgress,
 												image:
 													categoryImages[
 														categoryName
 													] || defaultImage,
 											}}
-											users={randomUsers} // Use memoized random users
+											users={uniqueEnrolledUsers}
 										/>
 									</Grid2>
 								);
@@ -199,11 +230,13 @@ const TrainingsSection = ({ trainings, trainingsLoading, currentRole }) => {
 				<Typography component="h2" variant="h5" sx={{ flexGrow: 1 }}>
 					{isEmployee && "Assigned "} Trainings
 				</Typography>
-				<Link to="/training-programs/new">
-					<IconButton sx={{ mr: 2 }}>
-						<AddIcon />
-					</IconButton>
-				</Link>
+				{currentRole === "Admin" && (
+					<Link to="/training-programs/new">
+						<IconButton sx={{ mr: 2 }}>
+							<AddIcon />
+						</IconButton>
+					</Link>
+				)}
 				<Link to="/training-programs">
 					<Button variant="contained" color="primary">
 						View All
@@ -277,11 +310,13 @@ const UsersSection = ({ users, usersLoading, refetch, currentRole }) => {
 				<Typography component="h2" variant="h5" sx={{ flexGrow: 1 }}>
 					{currentRole === "Admin" ? "Users" : "Employees"}
 				</Typography>
-				<Link to="/users/new">
-					<IconButton sx={{ mr: 2 }}>
-						<AddIcon />
-					</IconButton>
-				</Link>
+				{currentRole === "Admin" && (
+					<Link to="/users/new">
+						<IconButton sx={{ mr: 2 }}>
+							<AddIcon />
+						</IconButton>
+					</Link>
+				)}
 				<Link to="/users">
 					<Button variant="contained" color="primary">
 						View All
@@ -296,16 +331,6 @@ const UsersSection = ({ users, usersLoading, refetch, currentRole }) => {
 					flexDirection: "column",
 				}}
 			>
-				{users.length === 0 && (
-					<Typography
-						variant="body1"
-						color="textSecondary"
-						align="center"
-						mt={2}
-					>
-						No users found.
-					</Typography>
-				)}
 				{usersLoading ? (
 					<Progress
 						sx={{
@@ -313,15 +338,25 @@ const UsersSection = ({ users, usersLoading, refetch, currentRole }) => {
 						}}
 					/>
 				) : (
-					users
-						.slice(0, 7)
-						.map((user) => (
+					<>
+						{users.length === 0 && (
+							<Typography
+								variant="body1"
+								color="textSecondary"
+								align="center"
+								mt={2}
+							>
+								No users found.
+							</Typography>
+						)}
+						{users.slice(0, 7).map((user) => (
 							<UserCard
 								key={user._id}
 								user={user}
 								handleUserDelete={handleUserDelete}
 							/>
-						))
+						))}
+					</>
 				)}
 			</Box>
 		</Grid2>

@@ -16,7 +16,14 @@ const assignmentSchema = new mongoose.Schema({
 		ref: "User",
 		required: true,
 	},
-	
+	status: {
+		type: String,
+		enum: ["Assigned", "Completed"],
+		default: "Assigned",
+	},
+	completionDate: {
+		type: Date,
+	},
 });
 
 const Assignment = mongoose.model("Assignment", assignmentSchema);

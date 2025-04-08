@@ -40,19 +40,34 @@ function App() {
 					),
 					children: [
 						{ index: true, element: <Dashboard /> },
-
 						{
 							path: "training-programs",
 							children: [
 								{ index: true, element: <TrainingPrograms /> },
-								{ path: "new", element: <TrainingForm /> },
+								{
+									path: "new",
+									element: (
+										<ProtectedRoute
+											allowedRoles={["Admin"]}
+										>
+											<TrainingForm />
+										</ProtectedRoute>
+									),
+								},
+
 								{
 									path: ":id",
 									element: <TrainingDetails />,
 								},
 								{
 									path: ":id/edit",
-									element: <TrainingForm />,
+									element: (
+										<ProtectedRoute
+											allowedRoles={["Admin"]}
+										>
+											<TrainingForm />
+										</ProtectedRoute>
+									),
 								},
 							],
 						},

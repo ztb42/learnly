@@ -34,7 +34,6 @@ router.post("/", async (req, res) => {
 	}
 });
 
-
 // Update a Training Program
 router.put("/:id", async (req, res) => {
 	try {
@@ -107,7 +106,7 @@ router.get("/trainer/:trainerId", async (req, res) => {
 		// Find the training programs using the extracted IDs
 		const trainings = await TrainingProgram.find({
 			_id: { $in: trainingIds },
-		});
+		}).populate("manager");
 
 		res.json(trainings);
 	} catch (error) {
@@ -115,29 +114,6 @@ router.get("/trainer/:trainerId", async (req, res) => {
 	}
 });
 
-// // Get all Training Programs for a specific Employee
-// router.get("/employee/:employeeId", async (req, res) => {
-// 	try {
-// 		// Find all assignments for the employee
-// 		const assignments = await Assignment.find({
-// 			employee: req.params.employeeId,
-// 		}).select("trainingId"); // Only select the trainingId field
-
-// 		// Extract unique training program IDs
-// 		const trainingIds = [
-// 			...new Set(assignments.map((assignment) => assignment.trainingId)),
-// 		];
-
-// 		// Find the training programs using the extracted IDs
-// 		const trainings = await TrainingProgram.find({
-// 			_id: { $in: trainingIds },
-// 		});
-
-// 		res.json(trainings);
-// 	} catch (error) {
-// 		res.status(500).json({ error: error.message });
-// 	}
-// });
 // Get all Training Programs for a specific Employee
 router.get("/employee/:employeeId", async (req, res) => {
 	try {
@@ -216,15 +192,13 @@ router.get("/:id", async (req, res) => {
 			})
 			.populate("manager", "firstName lastName");
 
-		if (!training) return res.status(404).json({ error: "Training not found" });
+		if (!training)
+			return res.status(404).json({ error: "Training not found" });
 
 		res.json(training);
 	} catch (err) {
 		res.status(500).json({ error: err.message });
 	}
 });
-
-
-
 
 export default router;
