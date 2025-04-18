@@ -27,6 +27,8 @@ const TrainingPrograms = () => {
 		trainingsEndpoint = `/api/training-programs/manager/${user._id}`;
 	} else if (currentRole === "Trainer") {
 		trainingsEndpoint = `/api/training-programs/trainer/${user._id}`;
+	} else if (currentRole === "Employee") {
+		trainingsEndpoint = `/api/training-programs/employee/${user._id}`;
 	}
 
 	const {
