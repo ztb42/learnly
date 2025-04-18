@@ -222,7 +222,9 @@ const TrainingDetails = () => {
 				Sessions
 			</Typography>
 			<Grid2 container spacing={2} mb={4}>
-				{(sessions || []).map((session) => (
+				{[...(sessions || [])]
+				.sort((a, b) => new Date(a.sessionDate) - new Date(b.sessionDate))
+				.map((session) => (
 					<Grid2 key={session._id} size={{ xs: 12, sm: 6, md: 4 }}>
 						<Card
 							variant="outlined"
