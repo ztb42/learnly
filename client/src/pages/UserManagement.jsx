@@ -13,25 +13,48 @@ import useApi from "../hooks/useApi";
 import UserCard from "../components/dashboard/UserCard";
 import Progress from "../components/Progress";
 import { Link } from "react-router";
+import useAuth from "../hooks/useAuth";
 
 const UserManagement = () => {
+	const { user: loggedInUser } = useAuth();
+	const currentRole = loggedInUser.role.roleName;
+
+	// Define the appropriate endpoint based on role
+	let usersEndpoint = "/api/users";
+	if (currentRole === "Manager") {
+		usersEndpoint = "/api/users/role/Employee";
+	} else if (currentRole === "Trainer") {
+		usersEndpoint = `/api/users/trainer/${loggedInUser._id}/employees`;
+	}
+
 	const {
 		data: users,
 		loading: usersLoading,
 		refetch,
-	} = useApi("/api/users");
+	} = useApi(usersEndpoint);
 	const { data: roles, loading: rolesLoading } = useApi("/api/roles");
 
 	const [search, setSearch] = useState("");
 	const [page, setPage] = useState(1);
 	const [activeRole, setActiveRole] = useState(""); // Initially empty
+	const USERS_PER_PAGE = 8;
 
 	// Set the default active role once roles are fetched
 	useEffect(() => {
 		if (roles && roles.length > 0 && !activeRole) {
-			setActiveRole(roles[0]._id); // Default to the first role's ID
+			if (currentRole === "Admin") {
+				setActiveRole(roles[0]._id); // Default to the first role's ID for Admin
+			} else {
+				// For Manager and Trainer, find and set the Employee role
+				const employeeRole = roles.find(
+					(role) => role.roleName === "Employee"
+				);
+				if (employeeRole) {
+					setActiveRole(employeeRole._id);
+				}
+			}
 		}
-	}, [roles, activeRole]);
+	}, [roles, activeRole, currentRole]);
 
 	// Filter users by search + active role
 	const filteredUsers = users.filter((user) => {
@@ -41,6 +64,13 @@ const UserManagement = () => {
 			name.toLowerCase().includes(search.toLowerCase()) // Match the search term
 		);
 	});
+
+	// Calculate pagination
+	const totalPages = Math.ceil(filteredUsers.length / USERS_PER_PAGE);
+	const paginatedUsers = filteredUsers.slice(
+		(page - 1) * USERS_PER_PAGE,
+		page * USERS_PER_PAGE
+	);
 
 	const handlePageChange = (_, value) => setPage(value);
 
@@ -53,6 +83,12 @@ const UserManagement = () => {
 		refetch(); // Refetch the users after deletion
 	};
 
+	// Filter roles based on current user's role
+	const filteredRoles =
+		currentRole === "Admin"
+			? roles
+			: roles.filter((role) => role.roleName === "Employee");
+
 	return (
 		<Container
 			className="users-page"
@@ -62,7 +98,7 @@ const UserManagement = () => {
 			}}
 		>
 			<Typography variant="h4" gutterBottom>
-				Users
+				{currentRole === "Admin" ? "Users" : "Employees"}
 			</Typography>
 
 			{rolesLoading ? (
@@ -74,11 +110,11 @@ const UserManagement = () => {
 				/>
 			) : (
 				<>
-					{/* Role Tabs */}
-					{roles.length > 0 && (
+					{/* Role Tabs - Only show if there are roles and user is Admin */}
+					{filteredRoles.length > 0 && currentRole === "Admin" && (
 						<Tabs
 							value={Math.max(
-								roles.findIndex(
+								filteredRoles.findIndex(
 									(role) => role._id === activeRole
 								),
 								0
@@ -88,7 +124,7 @@ const UserManagement = () => {
 							textColor="primary"
 							variant="fullWidth"
 						>
-							{roles.map((role) => (
+							{filteredRoles.map((role) => (
 								<Tab key={role._id} label={role.roleName} />
 							))}
 						</Tabs>
@@ -97,9 +133,13 @@ const UserManagement = () => {
 					{/* Search Input */}
 					<TextField
 						fullWidth
-						label={`Search ${roles
-							.find((role) => role._id === activeRole)
-							?.roleName.toLowerCase()}s...`}
+						label={`Search ${
+							currentRole === "Admin"
+								? roles
+										.find((role) => role._id === activeRole)
+										?.roleName.toLowerCase()
+								: "employee"
+						}s...`}
 						variant="outlined"
 						margin="normal"
 						value={search}
@@ -117,7 +157,7 @@ const UserManagement = () => {
 							/>
 						) : (
 							<>
-								{filteredUsers.map((user) => (
+								{paginatedUsers.map((user) => (
 									<UserCard
 										key={user._id}
 										user={user}
@@ -132,18 +172,23 @@ const UserManagement = () => {
 					<Box
 						mt={4}
 						display="flex"
-						justifyContent="space-between"
+						justifyContent={
+							currentRole === "Admin" ? "space-between" : "center"
+						}
 						alignItems="center"
 					>
-						<Link to="/users/new">
-							<Button variant="contained" color="primary">
-								Add User
-							</Button>
-						</Link>
+						{currentRole === "Admin" && (
+							<Link to="/users/new">
+								<Button variant="contained" color="primary">
+									Add User
+								</Button>
+							</Link>
+						)}
 						<Pagination
-							count={1}
+							count={totalPages}
 							page={page}
 							onChange={handlePageChange}
+							color="primary"
 						/>
 					</Box>
 				</>

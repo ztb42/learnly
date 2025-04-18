@@ -53,22 +53,24 @@ const UserCard = ({ user, handleUserDelete, sx }) => {
 					</Typography>
 				</Box>
 
-				<Box display="flex" gap={1}>
-					<Link to={`/users/${user._id}/edit`}>
-						<Button variant="outlined" color="primary">
-							Edit
-						</Button>
-					</Link>
+				{loggedInUser.role.roleName === "Admin" && (
+					<Box display="flex" gap={1}>
+						<Link to={`/users/${user._id}/edit`}>
+							<Button variant="outlined" color="primary">
+								Edit
+							</Button>
+						</Link>
 
-					<Button
-						variant="outlined"
-						color="error"
-						disabled={loggedInUser._id === user._id}
-						onClick={() => setOpen(true)}
-					>
-						Delete
-					</Button>
-				</Box>
+						<Button
+							variant="outlined"
+							color="error"
+							disabled={loggedInUser._id === user._id}
+							onClick={() => setOpen(true)}
+						>
+							Delete
+						</Button>
+					</Box>
+				)}
 			</Box>
 
 			{/* Dialog Confirmation */}
